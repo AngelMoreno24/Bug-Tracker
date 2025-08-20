@@ -9,5 +9,5 @@ const ProjectMemberSchema = new Schema({
 });
 
 
-const User = mongoose.model('Project', ProjectMemberSchema);
-export default User;
+const ProjectMember = mongoose.model('ProjectMember', ProjectMemberSchema);
+export default ProjectMember;

@@ -41,5 +41,5 @@ const TicketSchema = new Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-const User = mongoose.model('User', TicketSchema);
-export default User;
+const Ticket = mongoose.model('Ticket', TicketSchema);
+export default Ticket;

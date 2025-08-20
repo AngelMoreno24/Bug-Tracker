@@ -9,5 +9,5 @@ const ActivityLogSchema = new Schema({
 });
 
 
-const User = mongoose.model('Project', ActivityLogSchema);
-export default User;
+const ActivityLog = mongoose.model('ActivityLog', ActivityLogSchema);
+export default ActivityLog;
