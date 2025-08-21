@@ -1,20 +1,25 @@
 import express from "express";
 import {
-  registerUser,
-  loginUser,
   getUsers,
   getUserById,
   updateUser,
   deleteUser,
 } from "../controllers/userController.js";
 
+import { authenticateToken } from "../middleware/tokenAuthentication.js";
+import { authorizeRoles } from "../middleware/roleMiddleware.js"; // optional
+
 const router = express.Router();
 
-router.post("/register", registerUser);
-router.post("/login", loginUser);
-router.get("/", getUsers);
-router.get("/:id", getUserById);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+// ✅ All routes are protected by cookie-based authentication
+router.use(authenticateToken);
+
+router.get("/", authorizeRoles("Manager"), getUsers);
+router.get("/:id", authorizeRoles("Manager", "Developer", "Tester"), getUserById);
+
+
+router.put("/:id", authorizeRoles("Manager", "Developer", "Tester"), updateUser);
+
+router.delete("/:id", authorizeRoles("Manager"), deleteUser);
 
 export default router;
