@@ -7,6 +7,7 @@ import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import projectMemberRoutes from "./routes/projectMemberRoutes.js";
+import activityLogRoutes from "./routes/activityLogRoutes.js";
 
 
 const app = express();
@@ -22,6 +23,7 @@ app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/projectMembers", projectMemberRoutes);
+app.use("/api/activityLog", activityLogRoutes);
 
 
 export default app;
