@@ -5,6 +5,7 @@ import cookieParser from "cookie-parser";
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
+import ticketRoutes from "./routes/ticketRoutes.js";
 
 
 const app = express();
@@ -18,6 +19,7 @@ app.use(cookieParser()); // ✅ Needed to read cookies
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/projects", projectRoutes);
+app.use("/api/tickets", ticketRoutes);
 
 
 export default app;
