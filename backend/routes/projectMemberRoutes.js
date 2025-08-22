@@ -5,7 +5,7 @@ import {
     removeProjectMember, 
 } from "../controllers/projectMemberController.js";
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
-import { authorizeRoles } from "../middleware/roleMiddleware.js"; // optional
+import { authorizeRoles } from "../middleware/roleMiddleware.js"; 
 
 const router = express.Router();
 
