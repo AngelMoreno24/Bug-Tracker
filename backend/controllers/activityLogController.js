@@ -1,6 +1,8 @@
 import ActivityLog from "../models/ActivityLogModel.js";
 
+// -------------------------
 // Get all activity logs for a project
+// -------------------------
 export const getProjectLogs = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -15,7 +17,10 @@ export const getProjectLogs = async (req, res) => {
   }
 };
 
+// -------------------------
 // Get activity logs for a ticket
+// -------------------------
+
 export const getTicketLogs = async (req, res) => {
   try {
     const { ticketId } = req.params;
@@ -30,7 +35,9 @@ export const getTicketLogs = async (req, res) => {
   }
 };
 
+// -------------------------
 // Get activity logs by user
+// -------------------------
 export const getUserLogs = async (req, res) => {
   try {
     const { userId } = req.params;

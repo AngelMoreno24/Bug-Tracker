@@ -1,6 +1,9 @@
 import Ticket from "../models/TicketModel.js";
 import ProjectMember from "../models/ProjectMemberModel.js";
 
+// -------------------------
+// Create ticket
+// -------------------------
 export const createTicket = async (req, res) => {
   try {
     const { projectId, title, description, priority, assignedTo } = req.body;
@@ -25,6 +28,9 @@ export const createTicket = async (req, res) => {
   }
 };
 
+// -------------------------
+// Get all tickets for a project
+// -------------------------
 export const getTickets = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -39,6 +45,9 @@ export const getTickets = async (req, res) => {
   }
 };
 
+// -------------------------
+// Update a ticket
+// -------------------------
 export const updateTicket = async (req, res) => {
   try {
     const { ticketId } = req.params;
@@ -56,6 +65,9 @@ export const updateTicket = async (req, res) => {
   }
 };
 
+// -------------------------
+// Delete a ticket
+// -------------------------
 export const deleteTicket = async (req, res) => {
   try {
     const { ticketId } = req.params;

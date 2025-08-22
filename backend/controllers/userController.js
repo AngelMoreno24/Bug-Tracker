@@ -1,6 +1,8 @@
 import User from "../models/UserModel.js";
 
+// -------------------------
 // Get all users
+// -------------------------
 export const getUsers = async (req, res) => {
   try {
     // req.user is available from middleware
@@ -11,7 +13,9 @@ export const getUsers = async (req, res) => {
   }
 };
 
+// -------------------------
 // Get single user
+// -------------------------
 export const getUserById = async (req, res) => {
   try {
     const user = await User.findById(req.params.id).select("-password");
@@ -22,7 +26,9 @@ export const getUserById = async (req, res) => {
   }
 };
 
+// -------------------------
 // Update user
+// -------------------------
 export const updateUser = async (req, res) => {
   try {
     const { name, email } = req.body;
@@ -37,7 +43,9 @@ export const updateUser = async (req, res) => {
   }
 };
 
+// -------------------------
 // Delete user
+// -------------------------
 export const deleteUser = async (req, res) => {
   try {
     const user = await User.findByIdAndDelete(req.params.id);
