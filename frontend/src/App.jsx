@@ -3,6 +3,15 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router";
+import EntryLayout from './components/EntryLayout';
+import Login from './pages/Login';
+import Signup from './pages/Signup';
+import Dashboard from './pages/Dashboard';
+import Layout from './components/layout';
+import Tickets from './pages/Tickets';
+import UserManager from './pages/UserManager';
+import RoleManager from './pages/RoleManager';
+import Projects from './pages/Projects';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -10,18 +19,20 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route index element={<Home />} />
-        <Route path="about" element={<About />} />
-
-        <Route element={<AuthLayout />}>
-          <Route path="login" element={<Login />} />
-          <Route path="register" element={<Register />} />
+        <Route element={<EntryLayout />}>
+          <Route index element={<Login />} />
+          <Route path="signup" element={<Signup />} />
         </Route>
 
-        <Route path="concerts">
-          <Route index element={<ConcertsHome />} />
-          <Route path=":city" element={<City />} />
-          <Route path="trending" element={<Trending />} />
+        <Route path="accounts">
+          <Route element={<Layout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
+            <Route path="mytickets" element={<Tickets />} />
+            <Route path="usermanager" element={<UserManager />} />
+            <Route path="rolemanager" element={<RoleManager />} />
+            <Route path="projects" element={<Projects />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
