@@ -10,7 +10,6 @@ import Dashboard from './pages/Dashboard';
 import Layout from './components/layout';
 import Tickets from './pages/Tickets';
 import UserManager from './pages/UserManager';
-import RoleManager from './pages/RoleManager';
 import Projects from './pages/Projects';
 
 function App() {
@@ -30,7 +29,6 @@ function App() {
             <Route path="dashboard" element={<Dashboard />} />
             <Route path="mytickets" element={<Tickets />} />
             <Route path="usermanager" element={<UserManager />} />
-            <Route path="rolemanager" element={<RoleManager />} />
             <Route path="projects" element={<Projects />} />
           </Route>
         </Route>

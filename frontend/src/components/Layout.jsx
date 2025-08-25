@@ -24,12 +24,6 @@ export default function Layout() {
           My Tickets
         </Link>
         <Link
-          to="/accounts/rolemanager"
-          className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 transition"
-        >
-          Role Manager
-        </Link>
-        <Link
           to="/accounts/usermanager"
           className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 transition"
         >
