@@ -63,7 +63,7 @@ const getColor = (role) => {
 
 
       <div className='px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto min-w-130'>
-        <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>User Manager</h1>  
+        <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Company Manager</h1>  
 
         <form onSubmit={handleSubmit}>
           <div className="flex flex-wrap gap-2 m-4">  

@@ -24,10 +24,10 @@ export default function Layout() {
           My Tickets
         </Link>
         <Link
-          to="/accounts/usermanager"
+          to="/accounts/companymanager"
           className="px-4 py-2 rounded bg-gray-700 hover:bg-gray-600 transition"
         >
-          User Manager
+          Company Manager
         </Link>
       </nav>
       
