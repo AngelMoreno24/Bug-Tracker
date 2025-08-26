@@ -12,6 +12,7 @@ import Tickets from './pages/Tickets';
 import UserManager from './pages/UserManager';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
+import ProjectMemberManager from './pages/ProjectMemberManager';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -32,6 +33,7 @@ function App() {
             <Route path="companymanager" element={<UserManager />} />
             <Route path="projects" element={<Projects />} />
             <Route path="projects/:id" element={<ProjectDetails />} />
+            <Route path="projects/:id/members" element={<ProjectMemberManager />} />
           </Route>
         </Route>
       </Routes>

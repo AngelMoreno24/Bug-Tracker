@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from 'react'
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 
 const ProjectDetails = () => {
+  const navigate = useNavigate();
 
     const { id } = useParams();  // <-- grabs "id" from the URL
 
@@ -138,7 +139,17 @@ const ProjectDetails = () => {
                     //------------------------------------------------------------
                 }
                 <div className='mt-5 px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto '>
-                    <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Members</h1>  
+                    
+                    <div className="flex items-center justify-between border-b-3 pt-5 pb-5">
+                        <h1 className="font-bold text-3xl text-center flex-1">Members</h1>
+
+                        <button 
+                            onClick={() => navigate(`/accounts/projects/${id}/members`)} 
+                            className="bg-blue-500 hover:bg-blue-700 text-white rounded h-8 w-20 "
+                        >
+                            Edit
+                        </button>
+                    </div>
                     <div className='grid grid-rows-4 '>
                         
                         <div>
