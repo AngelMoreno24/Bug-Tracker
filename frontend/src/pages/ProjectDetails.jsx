@@ -198,7 +198,7 @@ const ProjectDetails = () => {
                     //------------------------------------------------------------
                 }
                 <div className='mt-5 px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto '>
-                    <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Tickets</h1>  
+                    <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Open Tickets</h1>  
                     <div className='grid grid-rows-4 '>
                     <div className='grid grid-cols-5  px-4 py-2 h-auto border-b-1'>
                         <p className='m-auto h-auto font-bold'>Title</p>
