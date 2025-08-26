@@ -13,6 +13,7 @@ import UserManager from './pages/UserManager';
 import Projects from './pages/Projects';
 import ProjectDetails from './pages/ProjectDetails';
 import ProjectMemberManager from './pages/ProjectMemberManager';
+import ProjectTicketDetails from './pages/ProjectTicketDetails';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -34,6 +35,8 @@ function App() {
             <Route path="projects" element={<Projects />} />
             <Route path="projects/:id" element={<ProjectDetails />} />
             <Route path="projects/:id/members" element={<ProjectMemberManager />} />
+            <Route path="projects/:id/ticket" element={<ProjectTicketDetails />} />
+            
           </Route>
         </Route>
       </Routes>
