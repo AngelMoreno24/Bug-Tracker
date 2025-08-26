@@ -11,6 +11,7 @@ import Layout from './components/layout';
 import Tickets from './pages/Tickets';
 import UserManager from './pages/UserManager';
 import Projects from './pages/Projects';
+import ProjectDetails from './pages/ProjectDetails';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -30,6 +31,7 @@ function App() {
             <Route path="mytickets" element={<Tickets />} />
             <Route path="companymanager" element={<UserManager />} />
             <Route path="projects" element={<Projects />} />
+            <Route path="projects/:id" element={<ProjectDetails />} />
           </Route>
         </Route>
       </Routes>
