@@ -106,20 +106,22 @@ const ProjectDetails = () => {
   };
 
 
-  const ticketRow = (title, type, project, priority, submitter, key) => {
+    const ticketRow = (title, type, project, priority, submitter, key) => {
 
-    
-
-    return (
-      <div onClick={() =>{handleClick(title)}} key={key} className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'>
-        <p  className='self-center text-center'>{title}</p>
-        <p className={`self-center text-center rounded w-20 m-auto text-white ${getTypeColor(type)}`}>{type}</p>
-        <p className='self-center text-center'>{project}</p>
-        <p className={`self-center text-center rounded w-20 m-auto text-white ${getPriorityColor(priority)}`}>{priority}</p>
-        <p className='self-center text-center'>{submitter}</p>
-      </div>
-    );
-  };
+        return (
+            <div 
+                onClick={() => navigate(`/accounts/projects/ticket/${key}`)} 
+                key={key} 
+                className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'
+            >
+                <p  className='self-center text-center'>{title}</p>
+                <p className={`self-center text-center rounded w-20 m-auto text-white ${getTypeColor(type)}`}>{type}</p>
+                <p className='self-center text-center'>{project}</p>
+                <p className={`self-center text-center rounded w-20 m-auto text-white ${getPriorityColor(priority)}`}>{priority}</p>
+                <p className='self-center text-center'>{submitter}</p>
+            </div>
+        );
+    };
     return (
         <div>
 
