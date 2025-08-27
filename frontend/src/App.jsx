@@ -3,7 +3,6 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import { BrowserRouter, Routes, Route } from "react-router";
-import EntryLayout from './components/EntryLayout';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Dashboard from './pages/Dashboard';
@@ -20,11 +19,10 @@ function App() {
 
   return (
     <BrowserRouter>
-      <Routes>
-        <Route element={<EntryLayout />}>
-          <Route index element={<Login />} />
-          <Route path="signup" element={<Signup />} />
-        </Route>
+      <Routes
+      >
+        <Route index element={<Login />} />
+        <Route path="register" element={<Signup />} />
 
         <Route path="accounts">
           <Route element={<Layout />}>

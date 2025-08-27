@@ -1,8 +1,11 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Menu, X, Home, Folder, Ticket, Building } from "lucide-react"; // icons
+import { useNavigate } from 'react-router-dom'
+
 
 export default function Layout() {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -61,11 +64,9 @@ export default function Layout() {
         <div className="flex items-center justify-between h-16 bg-white px-4 rounded shadow mb-6">
           <h1 className="text-2xl font-bold">Dashboard</h1>
           <div className="flex space-x-2">
-            <button className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600">
-              Add Ticket
-            </button>
-            <button className="px-3 py-1 bg-gray-300 text-gray-800 rounded hover:bg-gray-400">
-              Settings
+            <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+                            onClick={() => navigate(`/`)} >
+              Logout
             </button>
           </div>
         </div>
