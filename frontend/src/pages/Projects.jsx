@@ -31,7 +31,7 @@ const Projects = () => {
           Details
         </button>
         <button 
-          onClick={() => navigate(`/accounts/projects/members/${id}`)} 
+          onClick={() => navigate(`/accounts/projects/${id}/members`)} 
           className='bg-blue-500 hover:bg-blue-700 text-white rounded self-center text-center h-8 w-35'>
           Manage Users
         </button>

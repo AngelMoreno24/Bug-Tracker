@@ -1,6 +1,9 @@
 import React, {useState, useEffect} from 'react'
+import { useNavigate } from 'react-router-dom'
 
 const Tickets = () => {
+
+  const navigate = useNavigate();
 
   const [tickets, setTickets] = useState([{}]);
 
@@ -49,7 +52,7 @@ const Tickets = () => {
     
 
     return (
-      <div onClick={() =>{handleClick(title)}} key={key} className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'>
+      <div onClick={() => navigate(`/accounts/projects/${key}`)} key={key} className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'>
         <p  className='self-center text-center'>{title}</p>
         <p className={`self-center text-center rounded w-20 m-auto text-white ${getTypeColor(type)}`}>{type}</p>
         <p className='self-center text-center'>{project}</p>
