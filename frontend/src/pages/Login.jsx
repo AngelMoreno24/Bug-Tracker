@@ -2,7 +2,7 @@ import { Outlet } from "react-router-dom";
 
 export default function Login() {
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen bg-gray-900">
       {/* Login Card */}
       <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-8">
         {/* Title */}
