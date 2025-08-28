@@ -61,9 +61,11 @@ export const login = async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
+    //generate tokens
     const token = generateToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    //set cookie
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
