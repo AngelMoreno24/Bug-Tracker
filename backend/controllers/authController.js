@@ -1,6 +1,7 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/UserModel.js";
+import Company from "../models/CompanyModel.js";
 
 // Generate JWT
 const generateToken = (user) => {
@@ -40,6 +41,11 @@ export const register = async (req, res) => {
       email,
       password: hashedPassword,
       role, // e.g., 'Developer', 'Tester', 'Manager'
+    });
+
+    // Create company
+    await Company.create({
+      ownerId: user._id,
     });
 
     res.status(201).json({ message: "User registered", user: { id: user._id, name: user.name, role: user.role } });
