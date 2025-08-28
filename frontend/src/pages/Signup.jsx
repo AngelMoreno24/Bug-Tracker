@@ -34,7 +34,7 @@ export default function Signup() {
     })
     .then((response) => {
       console.log("Signup successful:", response.data);
-      //navigate("/login"); // redirect after login
+      navigate("/"); // redirect after login
     })
     .catch((error) => {
       console.error("Signup failed:", error.response?.data || error.message);
@@ -44,7 +44,7 @@ export default function Signup() {
   };
 
   return (
-    <div className="flex items-center justify-center h-screen bg-gray-100">
+    <div className="flex items-center justify-center h-screen bg-gray-900">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-8">
         <h2 className="text-2xl font-bold text-center mb-6">Create an Account</h2>
 
@@ -122,7 +122,7 @@ export default function Signup() {
         <p className="text-center text-sm text-gray-600 mt-6">
           Already have an account?{" "}
           <span
-            onClick={() => navigate("/login")}
+            onClick={() => navigate("/")}
             className="text-blue-500 cursor-pointer hover:underline"
           >
             Sign in
