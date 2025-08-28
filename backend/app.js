@@ -12,7 +12,13 @@ import activityLogRoutes from "./routes/activityLogRoutes.js";
 
 const app = express();
 
-app.use(cors());
+app.use(
+  cors({
+    origin: "http://localhost:5173", // your frontend URL
+    credentials: true,               // allow cookies/auth headers
+  })
+);
+
 app.use(express.json());
 app.use(cookieParser()); // ✅ Needed to read cookies
 

@@ -2,15 +2,17 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from "../components/Modal"; // adjust the path as needed
 import AddProjectForm from "../components/forms/AddProjectForm";
+//import { useAuth } from "../components/AuthContext";
 
 const Projects = () => {
   const navigate = useNavigate();
 
+  //const { user, authFetch, logout } = useAuth();
+
+
+
   const [projects, setProjects] = useState([]);
   const [addProjectOpen, setAddProjectOpen] = useState(false);
-
-
-
   const [projectForm, setProjectForm] = useState({ title: "", description: "" });
 
 
@@ -20,6 +22,24 @@ const Projects = () => {
     setProjectForm({ title: "", description: "" });
     setAddProjectOpen(false);
   };
+
+
+  const fetchProjects = async () => {
+    try {
+      //const projects = await authFetch("/projects");
+      console.log(projects);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+
+
+
+
+
+
+
 
   useEffect(() => {
     const projectsArray = [
@@ -32,6 +52,11 @@ const Projects = () => {
     ];
     setProjects(projectsArray)
   },[])
+
+
+
+
+
 
   const row = (title, description, id, index) => {
     return (

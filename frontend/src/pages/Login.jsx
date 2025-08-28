@@ -1,51 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { useAuth } from "../components/AuthContext";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+
+  const { login, demoLogin } = useAuth();
 
   // 🔹 State for inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   // 🔹 Login handler
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
-    console.log("Logging in with:", email, password);
-
-    // Example API call
-    axios.post(`${import.meta.env.VITE_BACKEND_URL}/api/auth/login`, {
-      email,
-      password,
-    })
-    .then((response) => {
-      console.log("Login successful:", response.data);
-      navigate("/accounts"); // redirect after login
-    })
-    .catch((error) => {
-      console.error("Login failed:", error.response?.data || error.message);
-      alert("Login failed! Check your credentials.");
-    });
+    const success = await login(email, password);
+    if (success) {
+      navigate("/accounts/dashboard");
+    } else {
+      alert("Invalid credentials");
+    }
   };
 
-  // 🔹 Demo login handler
-  const handleDemoLogin = () => {
-    const demoEmail = "demo@example.com";
-    const demoPassword = "demopassword";
-
-    axios.post(`${process.env.VITE_BACKEND_URL}/api/auth/login`, {
-      email: demoEmail,
-      password: demoPassword,
-    })
-    .then((response) => {
-      console.log("Demo login successful:", response.data);
-      navigate("/accounts");
-    })
-    .catch((error) => {
-      console.error("Demo login failed:", error.response?.data || error.message);
-      alert("Demo login failed!");
-    });
+  const handleDemoLogin = async () => {
+    const success = await demoLogin();
+    if (success) navigate("/accounts/dashboard");
+    else setError("Demo login failed");
   };
 
   return (
