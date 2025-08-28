@@ -1,10 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import Modal from "../components/Modal"; // adjust the path as needed
+import AddProjectForm from "../components/forms/AddProjectForm";
 
 const Projects = () => {
   const navigate = useNavigate();
 
   const [projects, setProjects] = useState([]);
+  const [addProjectOpen, setAddProjectOpen] = useState(false);
+
+
+
+  const [projectForm, setProjectForm] = useState({ title: "", description: "" });
+
+
+
+  const handleAddProject = () => {
+    setProjects([...projects, { ...projectForm, createDate: new Date().toISOString().slice(0, 10) }]);
+    setProjectForm({ title: "", description: "" });
+    setAddProjectOpen(false);
+  };
+
   useEffect(() => {
     const projectsArray = [
       { id: 1, title: "Website", description: "Company website with marketing pages" },
@@ -43,7 +59,8 @@ const Projects = () => {
     <div>
       <h1>Projects</h1>  
 
-      <button className='px-4 py-2 bg-amber-300 hover:bg-amber-700 rounded transition mb-4 mt-4'>
+      <button className='px-4 py-2 bg-amber-300 hover:bg-amber-700 rounded transition mb-4 mt-4'
+            onClick={() => setAddProjectOpen(true)}>
         create Project
       </button>
 
@@ -61,6 +78,16 @@ const Projects = () => {
           ))}
         </div>
       </div>
+
+
+        {/* Modals */}
+        {addProjectOpen && (
+            <Modal title="Edit Ticket Details" onClose={() => setAddProjectOpen(false)} onSave={handleAddProject}>
+                <AddProjectForm projectForm={projectForm} setProjectForm={setProjectForm} />
+            </Modal>
+        )}
+
+
     </div>
   )
 }
