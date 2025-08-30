@@ -8,6 +8,9 @@ import projectRoutes from "./routes/projectRoutes.js";
 import ticketRoutes from "./routes/ticketRoutes.js";
 import projectMemberRoutes from "./routes/projectMemberRoutes.js";
 import activityLogRoutes from "./routes/activityLogRoutes.js";
+import companyRoutes from "./routes/companyRoutes.js";
+import companyMemberRoutes from "./routes/companyMemberRoutes.js";
+
 
 
 const app = express();
@@ -30,6 +33,8 @@ app.use("/api/projects", projectRoutes);
 app.use("/api/tickets", ticketRoutes);
 app.use("/api/projectMembers", projectMemberRoutes);
 app.use("/api/activityLog", activityLogRoutes);
+app.use("/api/company", companyRoutes);
+app.use("/api/companyMembers", companyMemberRoutes);
 
 
 export default app;
