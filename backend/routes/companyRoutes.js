@@ -12,6 +12,6 @@ router.use(authenticateToken);
 
 
 // (Admin only)
-router.get("/", authorizeRoles("Admin"), updateCompany);
+router.post("/", authorizeRoles("Admin"), updateCompany);
 
 export default router;
