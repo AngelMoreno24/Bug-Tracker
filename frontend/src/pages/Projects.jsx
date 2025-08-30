@@ -2,46 +2,58 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from "../components/Modal"; // adjust the path as needed
 import AddProjectForm from "../components/forms/AddProjectForm";
-//import { useAuth } from "../components/AuthContext";
+import { getProject } from '../api/ProjectAPI';
+import { useAuth } from "../hooks/useAuth"; 
 
 const Projects = () => {
   const navigate = useNavigate();
 
-  //const { user, authFetch, logout } = useAuth();
-
-
+  // ✅ now cleanly consuming context through useAuth
+  const { user, token } = useAuth();  
 
   const [projects, setProjects] = useState([]);
   const [addProjectOpen, setAddProjectOpen] = useState(false);
   const [projectForm, setProjectForm] = useState({ title: "", description: "" });
 
-
-
   const handleAddProject = () => {
-    setProjects([...projects, { ...projectForm, createDate: new Date().toISOString().slice(0, 10) }]);
+    setProjects([
+      ...projects,
+      { ...projectForm, createDate: new Date().toISOString().slice(0, 10) }
+    ]);
     setProjectForm({ title: "", description: "" });
     setAddProjectOpen(false);
   };
 
-
   const fetchProjects = async () => {
     try {
-      //const projects = await authFetch("/projects");
+      const projects = await getProject(token); // 🔑 use token from context
       console.log(projects);
+ 
+    if (projects && Array.isArray(projects)) {
+      const mappedProjects = projects.map((item) => ({
+        id: item.project._id,
+        title: item.project.name,
+        description: item.project.description,
+        role: item.role,
+      }));      
+      setProjects(mappedProjects); // ✅ update state with mapped output
+
+    }
+ 
+
     } catch (err) {
       console.error(err.message);
     }
   };
 
-
-
-
-
-
-
-
+  useEffect(() => {
+    if (token) {
+      fetchProjects();
+    }
+  }, [token]);
 
   useEffect(() => {
+
     const projectsArray = [
       { id: 1, title: "Website", description: "Company website with marketing pages" },
       { id: 2, title: "Dashboard", description: "Internal analytics dashboard" },
@@ -50,13 +62,8 @@ const Projects = () => {
       { id: 5, title: "Authentication", description: "User login and authentication system" },
       { id: 6, title: "E-commerce", description: "Online store platform with payments" },
     ];
-    setProjects(projectsArray)
-  },[])
-
-
-
-
-
+    setProjects(projectsArray);
+  }, []);
 
   const row = (title, description, id, index) => {
     return (
@@ -84,8 +91,10 @@ const Projects = () => {
     <div>
       <h1>Projects</h1>  
 
-      <button className='px-4 py-2 bg-amber-300 hover:bg-amber-700 rounded transition mb-4 mt-4'
-            onClick={() => setAddProjectOpen(true)}>
+      <button 
+        className='px-4 py-2 bg-amber-300 hover:bg-amber-700 rounded transition mb-4 mt-4'
+        onClick={() => setAddProjectOpen(true)}
+      >
         create Project
       </button>
 
@@ -104,15 +113,19 @@ const Projects = () => {
         </div>
       </div>
 
-
-        {/* Modals */}
-        {addProjectOpen && (
-            <Modal title="Edit Ticket Details" onClose={() => setAddProjectOpen(false)} onSave={handleAddProject}>
-                <AddProjectForm projectForm={projectForm} setProjectForm={setProjectForm} />
-            </Modal>
-        )}
-
-
+      {/* Modals */}
+      {addProjectOpen && (
+        <Modal 
+          title="Edit Ticket Details" 
+          onClose={() => setAddProjectOpen(false)} 
+          onSave={handleAddProject}
+        >
+          <AddProjectForm 
+            projectForm={projectForm} 
+            setProjectForm={setProjectForm} 
+          />
+        </Modal>
+      )}
     </div>
   )
 }
