@@ -1,7 +1,7 @@
 import Company from "../models/CompanyModel.js";
 
 // -------------------------
-// Update project info (Manager only)
+// Update company info (Manager only)
 // -------------------------
 export const updateCompany = async (req, res) => {
   try { 
