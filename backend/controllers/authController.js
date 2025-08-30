@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/UserModel.js";
 import Company from "../models/CompanyModel.js";
-import CompanyMember from "../models/CompanyMember.js";
+import CompanyMember from "../models/CompanyMemberModel.js";
 
 // Generate JWT (access token)
 const generateToken = (user) => {
