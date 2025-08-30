@@ -4,9 +4,8 @@ const Schema = mongoose.Schema;
 const ProjectSchema = new Schema({
   name: { type: String, required: true },
   description: String,
-  createdBy: { type: Schema.Types.ObjectId, ref: 'User', required: true },
-  createdAt: { type: Date, default: Date.now }
-});
+  companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
+}, { timestamps: true });
 
 
 

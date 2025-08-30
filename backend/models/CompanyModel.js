@@ -2,8 +2,8 @@ import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 
 const CompanySchema = new Schema({
-  ownerId: { type: String, required: true },
-  createdAt: { type: Date, default: Date.now },
+  name: { type: String, required: true },
+  ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 }, { timestamps: true });
 
 
