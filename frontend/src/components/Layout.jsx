@@ -1,11 +1,10 @@
 import { useState } from "react";
 import { Link, Outlet } from "react-router-dom";
 import { Menu, X, Home, Folder, Ticket, Building } from "lucide-react"; // icons
-import { useNavigate } from 'react-router-dom'
-
+import { useAuth } from "../hooks/useAuth";
 
 export default function Layout() {
-  const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [collapsed, setCollapsed] = useState(false);
 
   return (
@@ -62,10 +61,16 @@ export default function Layout() {
       <main className="flex-1 p-6 bg-gray-200 overflow-y-auto">
         {/* Top Bar */}
         <div className="flex items-center justify-between h-16 bg-white px-4 rounded shadow mb-6">
-          <h1 className="text-2xl font-bold">Dashboard</h1>
+          {user ? (
+            <h1 className="text-2xl font-bold">{user.name}</h1> // ✅ Show name
+          ) : (
+            <h1 className="text-2xl font-bold">Loading...</h1>
+          )}
           <div className="flex space-x-2">
-            <button className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-                            onClick={() => navigate(`/`)} >
+            <button
+              className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+              onClick={logout} // ✅ Real logout
+            >
               Logout
             </button>
           </div>

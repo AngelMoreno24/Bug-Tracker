@@ -14,11 +14,11 @@ import ProjectDetails from './pages/ProjectDetails';
 import ProjectMemberManager from './pages/ProjectMemberManager';
 import ProjectTicketDetails from './pages/ProjectTicketDetails';
 
+
 function App() {
   const [count, setCount] = useState(0)
 
   return (
-    <BrowserRouter>
       <Routes
       >
         <Route index element={<Login />} />
@@ -38,7 +38,6 @@ function App() {
           </Route>
         </Route>
       </Routes>
-    </BrowserRouter>
   )
 }
 

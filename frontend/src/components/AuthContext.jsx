@@ -1,88 +1,111 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+// src/components/AuthContext.jsx
+import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 
 export function AuthProvider({ children }) {
+  const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [token, setToken] = useState(null); // store access token in memory
 
+  // ✅ Configure axios to send cookies by default
   axios.defaults.withCredentials = true;
 
-  const api = axios.create({
-    baseURL: import.meta.env.VITE_BACKEND_URL,
-    withCredentials: true,
-  });
-
-  api.interceptors.response.use(
-    (res) => res,
-    async (err) => {
-      const originalRequest = err.config;
-      if (err.response?.status === 401 && !originalRequest._retry) {
-        originalRequest._retry = true;
-        try {
-          const res = await axios.post(
-            `${import.meta.env.VITE_BACKEND_URL}/api/auth/refresh`,
-            {},
-            { withCredentials: true }
-          );
-          setUser(res.data.user);
-          return api(originalRequest);
-        } catch (refreshErr) {
-          setUser(null);
-          return Promise.reject(refreshErr);
-        }
-      }
-      return Promise.reject(err);
-    }
-  );
-
+  // 🔹 On mount, refresh token
   useEffect(() => {
-    const fetchUser = async () => {
+    const refreshUser = async () => {
       try {
-        const res = await api.get("/api/auth/me");
+        const res = await axios.post(
+          `${import.meta.env.VITE_BACKEND_URL}/api/auth/refresh`,
+          {},
+          { withCredentials: true }
+        );
+        setToken(res.data.token); // new access token
         setUser(res.data.user);
+
+        // redirect if user exists
+        navigate("/accounts/dashboard", { replace: true });
       } catch {
+        console.log("User not logged in");
         setUser(null);
+        setToken(null);
       } finally {
         setLoading(false);
       }
     };
-    fetchUser();
+
+    refreshUser();
   }, []);
 
+  // 🔹 Login function
   const login = async (email, password) => {
     try {
-      const res = await api.post("/api/auth/login", { email, password });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        { email, password },
+        { withCredentials: true }
+      );
+
+      setToken(res.data.token);
       setUser(res.data.user);
+
+      // redirect after successful login
+      navigate("/accounts/dashboard", { replace: true });
+
       return true;
-    } catch {
+    } catch (err) {
+      console.error("Login failed:", err.response?.data || err.message);
       return false;
     }
   };
 
+  // 🔹 Demo login
   const demoLogin = async () => {
     try {
-      const res = await api.post("/api/auth/login", {
-        email: "demo@example.com",
-        password: "demopassword",
-      });
+      const res = await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
+        { email: "demo@example.com", password: "demopassword" },
+        { withCredentials: true }
+      );
+
+      setToken(res.data.token);
       setUser(res.data.user);
+
+      // redirect after successful demo login
+      navigate("/accounts/dashboard", { replace: true });
+
       return true;
-    } catch {
+    } catch (err) {
+      console.error("Demo login failed:", err.response?.data || err.message);
       return false;
     }
   };
 
+  // 🔹 Logout
   const logout = async () => {
     try {
-      await api.post("/api/auth/logout");
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`,
+        {},
+        { withCredentials: true }
+      );
       setUser(null);
-    } catch {}
+      setToken(null);
+
+      // redirect after logout
+      navigate("/", { replace: true });
+    } catch (err) {
+      console.error("Logout failed:", err.response?.data || err.message);
+    }
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, demoLogin, logout, loading, api }}>
+    <AuthContext.Provider
+      value={{ user, token, login, demoLogin, logout, loading }}
+    >
       {children}
     </AuthContext.Provider>
   );

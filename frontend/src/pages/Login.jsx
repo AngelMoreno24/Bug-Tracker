@@ -1,38 +1,46 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuth } from "../hooks/useAuth";
 
 export default function LoginPage() {
   const navigate = useNavigate();
+  const { login, demoLogin, loading } = useAuth();
 
-  const { login, demoLogin } = useAuth();
-
-  // 🔹 State for inputs
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
 
   // 🔹 Login handler
   const handleLogin = async (e) => {
     e.preventDefault();
+    setError("");
+
     const success = await login(email, password);
     if (success) {
       navigate("/accounts/dashboard");
     } else {
-      alert("Invalid credentials");
+      setError("Invalid email or password");
     }
   };
 
+  // 🔹 Demo login handler
   const handleDemoLogin = async () => {
+    setError("");
     const success = await demoLogin();
     if (success) navigate("/accounts/dashboard");
     else setError("Demo login failed");
   };
 
+  if (loading) {
+    return <div className="flex justify-center items-center h-screen">Loading...</div>;
+  }
+
   return (
     <div className="flex items-center justify-center h-screen bg-gray-900">
       <div className="bg-white shadow-lg rounded-lg w-full max-w-md p-8">
         <h2 className="text-2xl font-bold text-center mb-6">Sign In</h2>
+
+        {error && <p className="text-red-500 text-sm mb-4">{error}</p>}
 
         <form onSubmit={handleLogin} className="space-y-4">
           {/* Email */}
