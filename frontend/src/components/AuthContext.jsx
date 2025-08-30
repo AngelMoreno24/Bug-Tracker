@@ -1,4 +1,3 @@
-// src/components/AuthContext.js
 import React, { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
 
@@ -8,83 +7,85 @@ export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // ✅ Configure axios to send cookies
   axios.defaults.withCredentials = true;
-/*
-  // 🔹 On mount, check if user already logged in
+
+  const api = axios.create({
+    baseURL: import.meta.env.VITE_BACKEND_URL,
+    withCredentials: true,
+  });
+
+  api.interceptors.response.use(
+    (res) => res,
+    async (err) => {
+      const originalRequest = err.config;
+      if (err.response?.status === 401 && !originalRequest._retry) {
+        originalRequest._retry = true;
+        try {
+          const res = await axios.post(
+            `${import.meta.env.VITE_BACKEND_URL}/api/auth/refresh`,
+            {},
+            { withCredentials: true }
+          );
+          setUser(res.data.user);
+          return api(originalRequest);
+        } catch (refreshErr) {
+          setUser(null);
+          return Promise.reject(refreshErr);
+        }
+      }
+      return Promise.reject(err);
+    }
+  );
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        const res = await axios.get(
-          `${import.meta.env.VITE_BACKEND_URL}/api/auth/me`,
-          { withCredentials: true }
-        );
+        const res = await api.get("/api/auth/me");
         setUser(res.data.user);
-      } catch (err) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
       }
     };
-
     fetchUser();
   }, []);
-*/
-  // 🔹 Login function
+
   const login = async (email, password) => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-        { email, password },
-        { withCredentials: true }
-      );
-
+      const res = await api.post("/api/auth/login", { email, password });
       setUser(res.data.user);
       return true;
-    } catch (err) {
-      console.error("Login failed:", err.response?.data || err.message);
+    } catch {
       return false;
     }
   };
 
-  // 🔹 Demo login
   const demoLogin = async () => {
     try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-        { email: "demo@example.com", password: "demopassword" },
-        { withCredentials: true }
-      );
-
+      const res = await api.post("/api/auth/login", {
+        email: "demo@example.com",
+        password: "demopassword",
+      });
       setUser(res.data.user);
       return true;
-    } catch (err) {
-      console.error("Demo login failed:", err.response?.data || err.message);
+    } catch {
       return false;
     }
   };
 
-  // 🔹 Logout function
   const logout = async () => {
     try {
-      await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/logout`,
-        {},
-        { withCredentials: true }
-      );
+      await api.post("/api/auth/logout");
       setUser(null);
-    } catch (err) {
-      console.error("Logout failed:", err.response?.data || err.message);
-    }
+    } catch {}
   };
 
   return (
-    <AuthContext.Provider
-      value={{ user, login, demoLogin, logout, loading }}
-    >
+    <AuthContext.Provider value={{ user, login, demoLogin, logout, loading, api }}>
       {children}
     </AuthContext.Provider>
   );
 }
 
-export const useAuth = () => useContext(AuthContext);
+export default AuthContext;
