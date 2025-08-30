@@ -13,7 +13,7 @@ router.use(authenticateToken);
 
 // Get all members in a project
 router.get("/:projectId", getProjectMembers);
-router.post("/:id/members", authorizeRoles("Manager"),addProjectMember);
-router.delete("/:id/members", authorizeRoles("Manager"), removeProjectMember);
+router.post("/:id/members", authorizeRoles("Manager", "Admin"),addProjectMember);
+router.delete("/:id/members", authorizeRoles("Manager", "Admin"), removeProjectMember);
 
 export default router;

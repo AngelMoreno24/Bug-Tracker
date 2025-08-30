@@ -42,16 +42,23 @@ export const register = async (req, res) => {
       role,
     });
 
-    const company = await Company.create({ name: user.name ,ownerId: user._id });
+    // Create a company owned by this user
+    const company = await Company.create({ name: user.name, ownerId: user._id });
 
-
-    await CompanyMember.create({ userId: user._id, ownerId: company._id, role: "Admin" });
+    // ✅ FIX: use companyId instead of ownerId
+    await CompanyMember.create({
+      userId: user._id,
+      companyId: company._id,
+      role: "Admin",
+    });
 
     res.status(201).json({
       message: "User registered",
       user: { id: user._id, name: user.name, role: user.role },
+      company: { id: company._id, name: company.name }
     });
   } catch (error) {
+    console.error("Register error:", error);
     res.status(500).json({ message: "Server error" });
   }
 };

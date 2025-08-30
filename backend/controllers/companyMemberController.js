@@ -78,3 +78,27 @@ export const removeCompanyMember = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+
+// -------------------------
+// List companies the user is a member of
+// -------------------------
+export const myCompanies = async (req, res) => {
+  try {
+    // ✅ Find all company memberships for the logged-in user
+    const memberships = await CompanyMember.find({ userId: req.user._id })
+      .populate("companyId", "name"); // only get company name (from Company model)
+
+    // ✅ Format response to include role + company details
+    const companies = memberships.map((m) => ({
+      companyId: m.companyId._id,
+      companyName: m.companyId.name,
+      role: m.role, // role is from CompanyMember
+    }));
+
+    res.json({ companies });
+  } catch (error) {
+    console.error("List company memberships error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};

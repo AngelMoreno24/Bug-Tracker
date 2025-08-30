@@ -18,7 +18,7 @@ router.get("/", getUserProjects);
 router.get("/:id", getProjectById);
 
 // (Manager only)
-router.post("/", authorizeRoles("Manager"), createProject);
+router.post("/", authorizeRoles("Manager", "admin"), createProject);
 router.put("/:id", authorizeRoles("Manager"), updateProject);
 
 export default router;
