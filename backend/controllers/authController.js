@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import User from "../models/UserModel.js";
 import Company from "../models/CompanyModel.js";
+import CompanyMember from "../models/CompanyMember.js";
 
 // Generate JWT (access token)
 const generateToken = (user) => {
@@ -41,7 +42,10 @@ export const register = async (req, res) => {
       role,
     });
 
-    await Company.create({ ownerId: user._id });
+    const company = await Company.create({ ownerId: user._id });
+
+
+    await CompanyMember.create({ userId: user._id, ownerId: company._id });
 
     res.status(201).json({
       message: "User registered",
