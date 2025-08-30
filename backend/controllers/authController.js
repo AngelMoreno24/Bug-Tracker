@@ -42,10 +42,10 @@ export const register = async (req, res) => {
       role,
     });
 
-    const company = await Company.create({ ownerId: user._id });
+    const company = await Company.create({ name: user.name ,ownerId: user._id });
 
 
-    await CompanyMember.create({ userId: user._id, ownerId: company._id });
+    await CompanyMember.create({ userId: user._id, ownerId: company._id, role: "Admin" });
 
     res.status(201).json({
       message: "User registered",
