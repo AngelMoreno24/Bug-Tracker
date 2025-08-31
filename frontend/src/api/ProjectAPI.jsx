@@ -1,27 +1,24 @@
 import axios from "axios";
   axios.defaults.withCredentials = true;
 
-export const createProject = async (title, description) => {
+export const createProject = async (title, description, companyId, token) => {
+  try {
+    const res = await axios.post(
+      `${import.meta.env.VITE_BACKEND_URL}/api/projects/`,
+        { title, description, companyId },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`, // ✅ attach token
+          },
+          withCredentials: true,
+        }
+    );
 
-
-    try {
-      const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/projects/`,
-        { title, description },
-        { withCredentials: true }
-      );
-
-
-      // redirect after successful login
-      navigate("/accounts/dashboard", { replace: true });
-
-      return true;
-    } catch (err) {
-      console.error("Login failed:", err.response?.data || err.message);
-      return false;
-    }
-
-
+    return res.data;
+  } catch (err) {
+    console.error("Login failed:", err.response?.data || err.message);
+    return false;
+  }
 }
 
 export const getProject = async (token) => {
