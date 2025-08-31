@@ -1,11 +1,11 @@
 import axios from "axios";
   axios.defaults.withCredentials = true;
 
-export const createProject = async (title, description, companyId, token) => {
+export const createProject = async (name, description, companyId, token) => {
   try {
     const res = await axios.post(
       `${import.meta.env.VITE_BACKEND_URL}/api/projects/`,
-        { title, description, companyId },
+        { name , description, companyId },
         {
           headers: {
             Authorization: `Bearer ${token}`, // ✅ attach token

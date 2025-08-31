@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from "../components/Modal"; // adjust the path as needed
 import AddProjectForm from "../components/forms/AddProjectForm";
-import { getProject } from '../api/ProjectAPI';
+import { getProject, createProject } from '../api/ProjectAPI';
 import { useAuth } from "../hooks/useAuth"; 
 
 const Projects = () => {
@@ -13,14 +13,14 @@ const Projects = () => {
 
   const [projects, setProjects] = useState([]);
   const [addProjectOpen, setAddProjectOpen] = useState(false);
-  const [projectForm, setProjectForm] = useState({ title: "", description: "" });
+  const [projectForm, setProjectForm] = useState({ title: "", description: "", companyId: "" });
 
-  const handleAddProject = () => {
-    setProjects([
-      ...projects,
-      { ...projectForm, createDate: new Date().toISOString().slice(0, 10) }
-    ]);
-    setProjectForm({ title: "", description: "" });
+  const handleAddProject = async () => {
+
+    console.log(projectForm)
+    await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
+    await fetchProjects()
+    setProjectForm({ title: "", description: "", companyId: "" });
     setAddProjectOpen(false);
   };
 
