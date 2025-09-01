@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 
 import { getProjectMembers } from '../api/ProjectMemberAPI';
+import { getTickets } from '../api/TicketAPI';
 import { getProjectById } from '../api/ProjectAPI';
 import { useAuth } from "../hooks/useAuth";
 
@@ -31,6 +32,7 @@ const ProjectDetails = () => {
         if (token) {
             fetchProjectDetails();
             fetchProjectMembers();
+            fetchProjectTickets();
         }
     }, [token]);
 
@@ -64,7 +66,7 @@ const ProjectDetails = () => {
             const members = await getProjectMembers(id ,token); // 🔑 use token from context
             console.log(members);
 
-            setProjectMembers(members)
+            //setTickets(members)
 
 
         } catch (err) {
@@ -72,6 +74,23 @@ const ProjectDetails = () => {
         }
     };
 
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                          Ticket Details
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+    const fetchProjectTickets = async () => {
+        try {
+            const tickets = await getTickets(id ,token); // 🔑 use token from context
+            console.log(tickets);
+
+            //setTickets(tickets)
+
+
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
 
     useEffect(() => {
 
