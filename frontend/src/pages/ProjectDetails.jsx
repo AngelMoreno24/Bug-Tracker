@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
 
+import Modal from "../components/Modal"; // adjust the path as needed
+import AddTicketForm from "../components/forms/AddTicketForm";
+
 import { getProjectMembers } from '../api/ProjectMemberAPI';
-import { getTickets } from '../api/TicketAPI';
+import { getTickets, createTicket } from '../api/TicketAPI';
 import { getProjectById } from '../api/ProjectAPI';
 import { useAuth } from "../hooks/useAuth";
 
@@ -12,6 +15,7 @@ const ProjectDetails = () => {
     // retrieves token and user data from authContext
     const { user, token } = useAuth();
 
+    const [addTicketOpen, setAddTicketOpen] = useState(false);
 
     const { id } = useParams();  // <-- grabs "id" from the URL
 
@@ -66,7 +70,7 @@ const ProjectDetails = () => {
             const members = await getProjectMembers(id ,token); // 🔑 use token from context
             console.log(members);
 
-            //setTickets(members)
+            setProjectMembers(members)
 
 
         } catch (err) {
@@ -91,6 +95,29 @@ const ProjectDetails = () => {
             console.error(err.message);
         }
     };
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                          Add Ticket Handler
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+    const [ticketForm, setTicketForm] = useState({ title: "", description: "", type: "bug", priority: "low" , projectId:id});
+
+    const handleAddTicket = async () => {
+
+        console.log(ticketForm)
+    //const { projectId, title, description, priority, assignedTo } = req.body;
+        await createTicket( ticketForm, token )
+        await fetchProjectTickets()
+        setTicketForm({ title: "", description: "", type: "bug", priority: "low"  });
+        setAddTicketOpen(false);
+    };
+
+
+
+
+
 
     useEffect(() => {
 
@@ -270,7 +297,16 @@ const ProjectDetails = () => {
                     //------------------------------------------------------------
                 }
                 <div className='mt-5 px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto '>
-                    <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Open Tickets</h1>
+                    <div className="flex items-center justify-between border-b-3 pt-5 pb-5">
+                        <h1 className="font-bold text-3xl text-center flex-1">Tickets</h1>
+ 
+                        <button 
+                            className='px-4   bg-blue-500 hover:bg-blue-700 rounded transition h-8 text-white self-center text-center'
+                            onClick={() => setAddTicketOpen(true)}
+                        >
+                            Add
+                        </button>
+                    </div>
                     <div className='grid grid-rows-4 '>
                         <div className='grid grid-cols-5  px-4 py-2 h-auto border-b-1'>
                             <p className='m-auto h-auto font-bold'>Title</p>
@@ -286,6 +322,20 @@ const ProjectDetails = () => {
 
                 </div>
             </div>
+            
+            {/* Modals */}
+            {addTicketOpen && (
+                <Modal 
+                title="Edit Ticket Details" 
+                onClose={() => setAddTicketOpen(false)} 
+                onSave={handleAddTicket}
+                >
+                <AddTicketForm 
+                    ticketForm={ticketForm} 
+                    setTicketForm={setTicketForm} 
+                />
+                </Modal>
+            )}
         </div>
     )
 }
