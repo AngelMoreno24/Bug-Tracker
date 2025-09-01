@@ -88,7 +88,7 @@ const ProjectDetails = () => {
             const tickets = await getTickets(id ,token); // 🔑 use token from context
             console.log(tickets);
 
-            //setTickets(tickets)
+            setTickets(tickets)
 
 
         } catch (err) {
