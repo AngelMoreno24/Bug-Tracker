@@ -51,7 +51,7 @@ export const getProject = async (token) => {
 // -------------------------
 
 
-export const getProjectById = async (token) => {
+export const getProjectById = async (projectId, token) => {
   try {
     const res = await axios.get(
       `${import.meta.env.VITE_BACKEND_URL}/api/projects/${projectId}`,
