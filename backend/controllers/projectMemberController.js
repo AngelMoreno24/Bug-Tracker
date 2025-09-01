@@ -54,9 +54,16 @@ export const getProjectMembers = async (req, res) => {
     const { projectId } = req.params;
 
     const members = await ProjectMember.find({ projectId })
-      .populate("userId", "name email");
+      .populate("userId", "name"); // only fetch `name` field from User
 
-    res.json(members);
+    // Map into a clean array
+    const formattedMembers = members.map((member) => ({
+      id: member.userId._id,
+      name: member.userId.name,
+      role: member.role,
+    }));
+
+    res.json({ members: formattedMembers });
   } catch (err) {
     res.status(500).json({ message: "Error fetching members", error: err.message });
   }

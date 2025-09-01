@@ -21,6 +21,24 @@ const ProjectDetails = () => {
 
     const [projectTitle, setProjectTitle] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
+
+    const [projectMembers, setProjectMembers] = useState([{}]);
+ 
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                         Fetches destails for project, members, and tickets
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    useEffect(() => {
+        if (token) {
+            fetchProjectDetails();
+            fetchProjectMembers();
+        }
+    }, [token]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                          Project Details
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
     const fetchProjectDetails = async () => {
         try {
             const projects = await getProjectById(id ,token); // 🔑 use token from context
@@ -36,26 +54,27 @@ const ProjectDetails = () => {
         }
     };
 
-    useEffect(() => {
-        if (token) {
-            fetchProjectDetails();
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                          Member Details
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+ 
+    const fetchProjectMembers = async () => {
+        try {
+            const members = await getProjectMembers(id ,token); // 🔑 use token from context
+            console.log(members);
+
+            setProjectMembers(members)
+
+
+        } catch (err) {
+            console.error(err.message);
         }
-    }, [token]);
-
-
+    };
 
 
     useEffect(() => {
 
-        const array = [
-            { name: "Alice Johnson", role: "Admin" },
-            { name: "Bob Smith", role: "Developer" },
-            { name: "Charlie Brown", role: "Manager" },
-            { name: "Diana Prince", role: "Submitter" },
-            { name: "Ethan Clark", role: "Developer" },
-            { name: "Fiona Lee", role: "Submitter" },
-        ];
-        setUsers(array)
 
 
         const ticketsArray = [
@@ -189,7 +208,7 @@ const ProjectDetails = () => {
                         <div>
                             <p className='m-auto h-auto font-bold'>Admin</p>
                             <div className="flex flex-wrap gap-2">
-                                {users.map((user, index) =>
+                                {projectMembers.map((user, index) =>
                                     row(user.name, user.role, "Admin", index)
                                 )}
                             </div>
@@ -198,7 +217,7 @@ const ProjectDetails = () => {
                         <div>
                             <p className='m-auto h-auto font-bold'>Project Manager</p>
                             <div className="flex flex-wrap gap-2">
-                                {users.map((user, index) =>
+                                {projectMembers.map((user, index) =>
                                     row(user.name, user.role, "Manager", index)
                                 )}
                             </div>
@@ -207,7 +226,7 @@ const ProjectDetails = () => {
                         <div>
                             <p className='m-auto h-auto font-bold'>Developer</p>
                             <div className="flex flex-wrap gap-2">
-                                {users.map((user, index) =>
+                                {projectMembers.map((user, index) =>
                                     row(user.name, user.role, "Developer", index)
                                 )}
                             </div>
@@ -216,7 +235,7 @@ const ProjectDetails = () => {
                         <div>
                             <p className='m-auto h-auto font-bold'>Submitter</p>
                             <div className="flex flex-wrap gap-2">
-                                {users.map((user, index) =>
+                                {projectMembers.map((user, index) =>
                                     row(user.name, user.role, "Submitter", index)
                                 )}
                             </div>

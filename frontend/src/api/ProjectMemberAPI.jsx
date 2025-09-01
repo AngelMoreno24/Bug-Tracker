@@ -18,7 +18,7 @@ export const getProjectMembers = async (projectId, token) => {
       }
     );
 
-    return res.data;
+    return res.data.members;
   } catch (err) {
     console.error("Login failed:", err.response?.data || err.message);
     return false;
