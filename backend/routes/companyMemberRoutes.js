@@ -13,8 +13,8 @@ const router = express.Router();
 router.use(authenticateToken);
 
 // Get all members in a project
-router.get("/", authorizeRoles("admin"), addCompanyMember);
-router.post("/", authorizeRoles("admin"),listCompanyMembers);
+router.post("/", authorizeRoles("admin"), addCompanyMember);
+router.get("/", authorizeRoles("admin"),listCompanyMembers);
 router.delete("/", authorizeRoles("admin"), removeCompanyMember);
 
 

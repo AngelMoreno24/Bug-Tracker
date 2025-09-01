@@ -1,10 +1,45 @@
 import React, {useState, useEffect} from 'react'
 
+import { listCompanyMembers } from '../api/CompanyMemberAPI';
+
+import { useAuth } from "../hooks/useAuth";
+
 const UserManager = () => {
+
+  // retrieves token and user data from authContext
+  const {  token  } = useAuth();
 
   const [users, setUsers] = useState([{}]);
   const [inviteId, setInviteId] = useState('');
 
+
+  const [projectMembers, setProjectMembers] = useState([{}]);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                         Fetches destails for Company members
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  useEffect(() => {
+      if (token) {
+          fetchProjectMembers();
+      }
+  }, [token]);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Member Details
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const fetchProjectMembers = async () => {
+    try {
+        const members = await listCompanyMembers(token); // 🔑 use token from context
+        console.log(members.members);
+
+        setProjectMembers(members.members)
+
+
+    } catch (err) {
+        console.error(err.message);
+    }
+  };
 
   useEffect(() => {
 
@@ -96,7 +131,7 @@ const getColor = (role) => {
             <div>
               <p className='m-auto h-auto font-bold'>Admin</p>
               <div className="flex flex-wrap gap-2">
-                {users.map((user, index) =>
+                {projectMembers.map((user, index) =>
                 row(user.name, user.role, "Admin", index)
                 )}
               </div>
@@ -105,7 +140,7 @@ const getColor = (role) => {
             <div>
               <p className='m-auto h-auto font-bold'>Project Manager</p>
               <div className="flex flex-wrap gap-2">
-                {users.map((user, index) =>
+                {projectMembers.map((user, index) =>
                 row(user.name, user.role, "Manager", index)
                 )}
               </div>
@@ -114,7 +149,7 @@ const getColor = (role) => {
             <div>
               <p className='m-auto h-auto font-bold'>Developer</p> 
               <div className="flex flex-wrap gap-2">
-                {users.map((user, index) =>
+                {projectMembers.map((user, index) =>
                 row(user.name, user.role, "Developer", index)
                 )}
               </div>   
@@ -123,7 +158,7 @@ const getColor = (role) => {
             <div>
               <p className='m-auto h-auto font-bold'>Submitter</p>
               <div className="flex flex-wrap gap-2">
-                {users.map((user, index) =>
+                {projectMembers.map((user, index) =>
                 row(user.name, user.role, "Submitter", index)
                 )}
               </div>

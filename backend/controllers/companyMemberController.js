@@ -48,7 +48,15 @@ export const listCompanyMembers = async (req, res) => {
     if (!company) return res.status(403).json({ message: "No company found for admin" });
 
     const members = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role");
-    res.json({ members });
+    // Simplify data
+    const simplifiedMembers = members.map(m => ({
+      id: m._id,
+      name: m.userId.name,
+      email: m.userId.email,
+      role: m.role
+    }));
+
+    res.json({ members: simplifiedMembers });
   } catch (error) {
     console.error("List company members error:", error);
     res.status(500).json({ message: "Server error" });
