@@ -27,7 +27,7 @@ export function AuthProvider({ children }) {
         setUser(res.data.user);
 
         // redirect if user exists
-        navigate("/accounts/dashboard", { replace: true });
+        //navigate("/accounts/dashboard", { replace: true });
       } catch {
         console.log("User not logged in");
         setUser(null);
