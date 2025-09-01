@@ -28,11 +28,13 @@ export const createProject = async (req, res) => {
     // ✅ Create project tied to company
     const project = await Project.create({ name, description, companyId });
 
+ 
+
     // ✅ Add the creator as a ProjectMember automatically
     await ProjectMember.create({
       projectId: project._id,
       userId: req.user._id,
-      role: "Manager",
+      role: companyMembership.role,
     });
 
     res.status(201).json({ message: "Project created", project });
