@@ -41,6 +41,26 @@ export const getTickets = async (projectId, token) => {
   }
 };
 
+
+// -------------------------
+// Get One tickets By Id
+// -------------------------
+export const getTicketDetails = async (ticketId, token) => {
+  try {
+    const res = await axios.get(
+      `${BASE_URL}/api/tickets/${ticketId}/details`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Fetch tickets failed:", err.response?.data || err.message);
+    return false;
+  }
+};
+
 // -------------------------
 // Update a ticket
 // -------------------------

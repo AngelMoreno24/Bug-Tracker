@@ -1,57 +1,62 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from 'react'
 import Modal from "../components/Modal"; // adjust the path as needed
+import { useParams, useNavigate } from 'react-router-dom';
+
 import EditTicketForm from "../components/forms/EditTicketForm";
 import AddCommentForm from "../components/forms/AddCommentForm";
 import AddAttachmentForm from "../components/forms/AddAttachmentForm";
-// ✅ Generic TableRow component
-const TableRow = ({ values, colWidths, truncateCols = [], rowKey, minWidths = [], isHeader = false }) => {
-  return (
-    <div
-      key={rowKey}
-      className={`grid ${colWidths} px-4 py-2 border-t ${
-        isHeader
-          ? "bg-blue-200 font-bold text-sm"
-          : "bg-white hover:bg-gray-100 text-sm"
-      } box-border`}
-    >
-      {values.map((val, i) => (
-        <p
-          key={i}
-          className={`self-center p-1 ${
-            truncateCols.includes(i)
-              ? "text-left truncate max-w-[200px]"
-              : "text-center"
-          } ${minWidths[i] || ""}`}
-          title={truncateCols.includes(i) ? val : undefined}
-        >
-          {val}
-        </p>
-      ))}
-    </div>
-  );
-};
 
-// Example Data
-const ticketInfoData = {
-  title: "Login Page Bug",
-  status: "In Progress",
-  priority: "High",
-  assignedTo: "Alice",
-  created: "2025-08-20",
-  updated: "2025-08-22",
-};
+import { getTicketDetails } from '../api/TicketAPI';
 
-const initialComments = [
-  { commenter: "Alice", message: "Looking into this issue right now.", createDate: "2025-08-20" },
-  { commenter: "Bob", message: "Bug confirmed. Reproduced in v1.2.0.", createDate: "2025-08-21" },
-];
+import { useAuth } from "../hooks/useAuth";
 
-const initialAttachments = [
-  { file: "screenshot1.png", uploader: "Alice", notes: "Error screen capture", created: "2025-08-20" },
-];
 
 // Main Component
 const ProjectTicketDetails = () => {
+
+
+
+  // retrieves token and user data from authContext
+  const { user, token } = useAuth();
+
+
+    const { id } = useParams();  // <-- grabs "id" from the URL
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                         Fetches details for ticket
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    useEffect(() => {
+        if (token) {
+            fetchTicketDetails();
+        }
+    }, [token]);
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                          Ticket Details
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    const fetchTicketDetails = async () => {
+        try {
+            console.log(id)
+            const ticketDetails = await getTicketDetails(id ,token); // 🔑 use token from context
+            console.log(ticketDetails);
+            //const projectInfo = projects.project
+
+            //setProjectTitle(projectInfo.title)
+            //setProjectDescription(projectInfo.description)
+            setTicketInfo(ticketDetails);
+
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Set Use States
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
   const [ticketInfo, setTicketInfo] = useState(ticketInfoData);
   const [comments, setComments] = useState(initialComments);
   const [attachments, setAttachments] = useState(initialAttachments);
@@ -200,5 +205,60 @@ const ProjectTicketDetails = () => {
     </div>
   );
 };
+
+
+
+
+
+// ✅ Generic TableRow component
+const TableRow = ({ values, colWidths, truncateCols = [], rowKey, minWidths = [], isHeader = false }) => {
+  return (
+    <div
+      key={rowKey}
+      className={`grid ${colWidths} px-4 py-2 border-t ${
+        isHeader
+          ? "bg-blue-200 font-bold text-sm"
+          : "bg-white hover:bg-gray-100 text-sm"
+      } box-border`}
+    >
+      {values.map((val, i) => (
+        <p
+          key={i}
+          className={`self-center p-1 ${
+            truncateCols.includes(i)
+              ? "text-left truncate max-w-[200px]"
+              : "text-center"
+          } ${minWidths[i] || ""}`}
+          title={truncateCols.includes(i) ? val : undefined}
+        >
+          {val}
+        </p>
+      ))}
+    </div>
+  );
+};
+
+// Example Data
+const ticketInfoData = {
+  title: "Login Page Bug",
+  status: "In Progress",
+  priority: "High",
+  assignedTo: "Alice",
+  created: "2025-08-20",
+  updated: "2025-08-22",
+};
+
+const initialComments = [
+  { commenter: "Alice", message: "Looking into this issue right now.", createDate: "2025-08-20" },
+  { commenter: "Bob", message: "Bug confirmed. Reproduced in v1.2.0.", createDate: "2025-08-21" },
+];
+
+const initialAttachments = [
+  { file: "screenshot1.png", uploader: "Alice", notes: "Error screen capture", created: "2025-08-20" },
+];
+
+
+
+
 
 export default ProjectTicketDetails;

@@ -204,11 +204,11 @@ const ProjectDetails = () => {
     };
 
 
-    const ticketRow = (title, type, project, priority, submitter, key) => {
+    const ticketRow = (title, type, project, priority, submitter, key, id) => {
 
         return (
             <div
-                onClick={() => navigate(`/accounts/projects/ticket/${key}`)}
+                onClick={() => navigate(`/accounts/projects/ticket/${id}`)}
                 key={key}
                 className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'
             >
@@ -316,7 +316,7 @@ const ProjectDetails = () => {
                             <p className='m-auto h-auto font-bold'>Submitter</p>
                         </div>
                         {tickets.map((ticket, index) =>
-                            ticketRow(ticket.title, ticket.type, ticket.project, ticket.priority, ticket.submitter, index)
+                            ticketRow(ticket.title, ticket.type, ticket.project, ticket.priority, ticket.submitter, index, ticket._id)
                         )}
                     </div>
 

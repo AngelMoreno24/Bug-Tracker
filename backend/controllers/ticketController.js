@@ -44,6 +44,21 @@ export const getTickets = async (req, res) => {
 };
 
 // -------------------------
+// Get details for a ticket
+// -------------------------
+export const getTicketDetails = async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+
+    const ticket = await Ticket.findById( ticketId )
+
+    res.json(ticket);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching tickets", error: err.message });
+  }
+};
+
+// -------------------------
 // Update a ticket
 // -------------------------
 export const updateTicket = async (req, res) => {

@@ -4,6 +4,7 @@ import {
   getTickets,
   updateTicket,
   deleteTicket,
+  getTicketDetails
 } from "../controllers/ticketController.js";
 
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
@@ -17,6 +18,10 @@ router.post("/", createTicket);
 
 // Get all tickets for a project
 router.get("/:projectId", getTickets);
+
+
+// Get One tickets by Id
+router.get("/:ticketId/details", getTicketDetails);
 
 // Update a ticket
 router.put("/:ticketId", updateTicket);
