@@ -36,6 +36,11 @@ const ProjectTicketDetails = () => {
     /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+    
+
+    const [title, setTitle] = useState('');
+    const [description, setDescription] = useState('');
+
     const fetchTicketDetails = async () => {
         try {
             console.log(id)
@@ -45,7 +50,23 @@ const ProjectTicketDetails = () => {
 
             //setProjectTitle(projectInfo.title)
             //setProjectDescription(projectInfo.description)
-            setTicketInfo(ticketDetails);
+            // If it's a single object
+            const filteredTicket = {
+              createdBy: ticketDetails.createdBy,
+              assignedTo: ticketDetails.assignedTo,
+              projectId: ticketDetails.projectId,
+              priority: ticketDetails.priority,
+              status: ticketDetails.status,
+              type: ticketDetails.type,
+              createdAt: ticketDetails.createdAt,
+              updatedAt: ticketDetails.updatedAt,
+            };
+
+            setTitle( ticketDetails.title)
+            setDescription(ticketDetails.description)
+            console.log(filteredTicket);
+
+            setTicketInfo(filteredTicket); 
 
         } catch (err) {
             console.error(err.message);
@@ -93,10 +114,9 @@ const ProjectTicketDetails = () => {
         
       {/* Project Detail */}
       <div className="border rounded-xl shadow-sm p-6 bg-white mb-6 box-border min-w-[770px]">
-        <h1 className="text-2xl font-bold mb-4">Project Details</h1>
-        <p><strong>Project ID:</strong> 12345</p>
+        <h1 className="text-2xl font-bold mb-4">{title}</h1>
         <p className="mt-2">
-          Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.
+          {description}
         </p>
       </div>
 
