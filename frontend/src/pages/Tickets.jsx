@@ -11,7 +11,7 @@ const Tickets = () => {
 
   const { token } = useAuth();  
 
-  const [tickets, setTickets] = useState([{}]);
+  const [tickets, setTickets] = useState([]);
 
 
   const fetchTickets = async () => {
@@ -37,25 +37,6 @@ const Tickets = () => {
 
 
 
-
-
-
-
-
-
-
-  useEffect(() => {
-
-  const array = [
-    { title: "Login button not working", type: "Bug", project: "Website", priority: "high", submitter: "Jane" },
-    { title: "Add dark mode", type: "Feature", project: "Dashboard", priority: "medium", submitter: "John" },
-    { title: "Fix API timeout", type: "Bug", project: "Backend API", priority: "high", submitter: "Alice" },
-    { title: "Create onboarding flow", type: "Task", project: "Mobile App", priority: "low", submitter: "Bob" },
-    { title: "Improve password strength rules", type: "Feature", project: "Authentication", priority: "medium", submitter: "Sarah" },
-    { title: "Update footer links", type: "Task", project: "Website", priority: "low", submitter: "Tom" },
-    ];
-    setTickets(array)
-  },[])
 
   const getTypeColor = (type) => {
   switch (type) {
@@ -84,12 +65,12 @@ const Tickets = () => {
   };
 
 
-  const row = (title, type, project, priority, submitter, key) => {
+  const row = (title, type, project, priority, submitter, key, id) => {
 
     
 
     return (
-      <div onClick={() => navigate(`/accounts/projects/${key}`)} key={key} className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'>
+      <div onClick={() => navigate(`/accounts/projects/ticket/${id}`)} key={key} className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'>
         <p  className='self-center text-center'>{title}</p>
         <p className={`self-center text-center rounded w-20 m-auto text-white ${getTypeColor(type)}`}>{type}</p>
         <p className='self-center text-center'>{project}</p>
@@ -119,7 +100,7 @@ const Tickets = () => {
             <p className='m-auto h-auto font-bold'>Submitter</p>
           </div>
           {tickets?tickets.map((ticket, index) =>
-            row(ticket.title, ticket.type, ticket.project, ticket.priority, ticket.submitter, index)
+            row(ticket.title, ticket.type, ticket.projectId.name, ticket.priority, ticket.createdBy.name, index, ticket._id)
           ):(<p></p>)}
         </div>
       </div>
