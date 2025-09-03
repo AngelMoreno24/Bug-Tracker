@@ -1,11 +1,48 @@
 import React, {useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 
+import { useAuth } from "../hooks/useAuth";
+
+import { getAssignedTickets } from '../api/TicketAPI';
+
 const Tickets = () => {
 
   const navigate = useNavigate();
 
+  const { token } = useAuth();  
+
   const [tickets, setTickets] = useState([{}]);
+
+
+  const fetchTickets = async () => {
+    try {
+      const ticketList = await getAssignedTickets(token); // 🔑 use token from context
+      console.log(ticketList);
+ 
+      setTickets(ticketList); // ✅ update state with mapped output
+
+ 
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  useEffect(() => {
+    if (token) {
+      fetchTickets();
+    }
+  }, [token]);
+
+
+
+
+
+
+
+
+
+
 
   useEffect(() => {
 
@@ -81,9 +118,9 @@ const Tickets = () => {
             <p className='m-auto h-auto font-bold'>Priority</p>
             <p className='m-auto h-auto font-bold'>Submitter</p>
           </div>
-          {tickets.map((ticket, index) =>
+          {tickets?tickets.map((ticket, index) =>
             row(ticket.title, ticket.type, ticket.project, ticket.priority, ticket.submitter, index)
-          )}
+          ):(<p></p>)}
         </div>
       </div>
     </div>

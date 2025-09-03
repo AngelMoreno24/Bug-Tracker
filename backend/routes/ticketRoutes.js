@@ -4,7 +4,8 @@ import {
   getTickets,
   updateTicket,
   deleteTicket,
-  getTicketDetails
+  getTicketDetails,
+  getAssignedTicket
 } from "../controllers/ticketController.js";
 
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
@@ -19,9 +20,11 @@ router.post("/", createTicket);
 // Get all tickets for a project
 router.get("/:projectId", getTickets);
 
-
 // Get One tickets by Id
 router.get("/:ticketId/details", getTicketDetails);
+
+// Get assigned tickets for current user
+router.get("/", getAssignedTicket);
 
 // Update a ticket
 router.put("/:ticketId", updateTicket);

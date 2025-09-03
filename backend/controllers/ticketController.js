@@ -62,6 +62,22 @@ export const getTicketDetails = async (req, res) => {
 };
 
 // -------------------------
+// Get assigned tickets
+// -------------------------
+export const getAssignedTicket = async (req, res) => {
+  try {
+
+    const ticket = await Ticket.find( { assignedTo: req.user._id } )
+    .populate("createdBy", "name")
+    .populate("projectId", "name")
+    .populate("assignedTo", "name");
+
+    res.json(ticket);
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching tickets", error: err.message });
+  }
+};
+// -------------------------
 // Update a ticket
 // -------------------------
 export const updateTicket = async (req, res) => {
