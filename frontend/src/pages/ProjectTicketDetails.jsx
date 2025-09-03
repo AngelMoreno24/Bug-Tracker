@@ -71,6 +71,7 @@ const ProjectTicketDetails = () => {
 
 
       const filteredTicketForm = {
+        id: ticketDetails.projectId._id,
         title: ticketDetails.title,
         description: ticketDetails.description,
         assignedTo: ticketDetails.assignedTo.name,
