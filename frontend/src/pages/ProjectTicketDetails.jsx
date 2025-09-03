@@ -6,7 +6,7 @@ import EditTicketForm from "../components/forms/EditTicketForm";
 import AddCommentForm from "../components/forms/AddCommentForm";
 import AddAttachmentForm from "../components/forms/AddAttachmentForm";
 
-import { getTicketDetails } from '../api/TicketAPI';
+import { getTicketDetails, updateTicket } from '../api/TicketAPI';
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -20,58 +20,96 @@ const ProjectTicketDetails = () => {
   const { user, token } = useAuth();
 
 
-    const { id } = useParams();  // <-- grabs "id" from the URL
+  const { id } = useParams();  // <-- grabs "id" from the URL
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    //                         Fetches details for ticket
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    useEffect(() => {
-        if (token) {
-            fetchTicketDetails();
-        }
-    }, [token]);
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                         Fetches details for ticket
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  useEffect(() => {
+    if (token) {
+      fetchTicketDetails();
+    }
+  }, [token]);
 
-    /////////////////////////////////////////////////////////////////////////////////////////////////
-    //                                          Ticket Details
-    /////////////////////////////////////////////////////////////////////////////////////////////////
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Ticket Details
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-    
 
-    const [title, setTitle] = useState('');
-    const [description, setDescription] = useState('');
 
-    const fetchTicketDetails = async () => {
-        try {
-            console.log(id)
-            const ticketDetails = await getTicketDetails(id ,token); // 🔑 use token from context
-            console.log(ticketDetails);
-            //const projectInfo = projects.project
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
 
-            //setProjectTitle(projectInfo.title)
-            //setProjectDescription(projectInfo.description)
-            // If it's a single object
-            const filteredTicket = {
-              createdBy: ticketDetails.createdBy.name,
-              assignedTo: ticketDetails.assignedTo.name,
-              projectId: ticketDetails.projectId.name,
-              priority: ticketDetails.priority,
-              status: ticketDetails.status,
-              type: ticketDetails.type,
-              createdAt: ticketDetails.createdAt,
-              updatedAt: ticketDetails.updatedAt,
-            };
+  const fetchTicketDetails = async () => {
+    try {
+      console.log(id)
+      const ticketDetails = await getTicketDetails(id, token); // 🔑 use token from context
+      console.log(ticketDetails);
+      //const projectInfo = projects.project
 
-            setTitle( ticketDetails.title)
-            setDescription(ticketDetails.description)
-            console.log(filteredTicket);
+      //setProjectTitle(projectInfo.title)
+      //setProjectDescription(projectInfo.description)
+      // If it's a single object
+      const filteredTicket = {
+        createdBy: ticketDetails.createdBy.name,
+        assignedTo: ticketDetails.assignedTo.name,
+        project: ticketDetails.projectId.name,
+        priority: ticketDetails.priority,
+        status: ticketDetails.status,
+        type: ticketDetails.type,
+        createdAt: ticketDetails.createdAt,
+        updatedAt: ticketDetails.updatedAt,
+      };
 
-            setTicketInfo(filteredTicket); 
+      setTitle(ticketDetails.title)
+      setDescription(ticketDetails.description)
+      console.log(filteredTicket);
 
-        } catch (err) {
-            console.error(err.message);
-        }
-    };
+      setTicketInfo(filteredTicket);
+
+
+
+      const filteredTicketForm = {
+        title: ticketDetails.title,
+        description: ticketDetails.description,
+        assignedTo: ticketDetails.assignedTo.name,
+        priority: ticketDetails.priority,
+        status: ticketDetails.status,
+        type: ticketDetails.type,
+      };
+
+      setTicketForm(filteredTicketForm);
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Handles Ticket editing
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const handleTicketEdit = async () => {
+    // build only changed fields
+    const alteredFields = Object.fromEntries(
+      Object.entries(ticketForm).filter(([key, value]) => value !== "" && value !== ticketInfo[key])
+    );
+
+    console.log("Altered fields:", alteredFields);
+
+    if (Object.keys(alteredFields).length === 0) {
+      console.log("No changes to update.");
+      setEditTicketOpen(false);
+      return;
+    }
+
+    await updateTicket(id, alteredFields, token);
+    await fetchTicketDetails();
+    setEditTicketOpen(false);
+  };
+
+
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //                                          Set Use States
@@ -111,7 +149,7 @@ const ProjectTicketDetails = () => {
   return (
     <div className="p-6 box-border min-w-[790px]">
 
-        
+
       {/* Project Detail */}
       <div className="border rounded-xl shadow-sm p-6 bg-white mb-6 box-border min-w-[770px]">
         <h1 className="text-2xl font-bold mb-4">{title}</h1>
@@ -204,24 +242,24 @@ const ProjectTicketDetails = () => {
         ))}
       </div>
 
-        {/* Modals */}
-        {editTicketOpen && (
-            <Modal title="Edit Ticket Details" onClose={() => setEditTicketOpen(false)} onSave={handleTicketSave}>
-                <EditTicketForm ticketForm={ticketForm} setTicketForm={setTicketForm} />
-            </Modal>
-        )}
+      {/* Modals */}
+      {editTicketOpen && (
+        <Modal title="Edit Ticket Details" onClose={() => setEditTicketOpen(false)} onSave={handleTicketEdit}>
+          <EditTicketForm ticketForm={ticketForm} setTicketForm={setTicketForm} />
+        </Modal>
+      )}
 
-        {addCommentOpen && (
-            <Modal title="Add Comment" onClose={() => setAddCommentOpen(false)} onSave={handleAddComment}>
-                <AddCommentForm commentForm={commentForm} setCommentForm={setCommentForm} />
-            </Modal>
-        )}
+      {addCommentOpen && (
+        <Modal title="Add Comment" onClose={() => setAddCommentOpen(false)} onSave={handleAddComment}>
+          <AddCommentForm commentForm={commentForm} setCommentForm={setCommentForm} />
+        </Modal>
+      )}
 
-        {addAttachmentOpen && (
-            <Modal title="Add Attachment" onClose={() => setAddAttachmentOpen(false)} onSave={handleAddAttachment}>
-                <AddAttachmentForm attachmentForm={attachmentForm} setAttachmentForm={setAttachmentForm} />
-            </Modal>
-        )}
+      {addAttachmentOpen && (
+        <Modal title="Add Attachment" onClose={() => setAddAttachmentOpen(false)} onSave={handleAddAttachment}>
+          <AddAttachmentForm attachmentForm={attachmentForm} setAttachmentForm={setAttachmentForm} />
+        </Modal>
+      )}
     </div>
   );
 };
@@ -235,20 +273,18 @@ const TableRow = ({ values, colWidths, truncateCols = [], rowKey, minWidths = []
   return (
     <div
       key={rowKey}
-      className={`grid ${colWidths} px-4 py-2 border-t ${
-        isHeader
+      className={`grid ${colWidths} px-4 py-2 border-t ${isHeader
           ? "bg-blue-200 font-bold text-sm"
           : "bg-white hover:bg-gray-100 text-sm"
-      } box-border`}
+        } box-border`}
     >
       {values.map((val, i) => (
         <p
           key={i}
-          className={`self-center p-1 ${
-            truncateCols.includes(i)
+          className={`self-center p-1 ${truncateCols.includes(i)
               ? "text-left truncate max-w-[200px]"
               : "text-center"
-          } ${minWidths[i] || ""}`}
+            } ${minWidths[i] || ""}`}
           title={truncateCols.includes(i) ? val : undefined}
         >
           {val}
@@ -261,11 +297,11 @@ const TableRow = ({ values, colWidths, truncateCols = [], rowKey, minWidths = []
 // Example Data
 const ticketInfoData = {
   title: "Login Page Bug",
+  description: "description",
   status: "In Progress",
   priority: "High",
   assignedTo: "Alice",
-  created: "2025-08-20",
-  updated: "2025-08-22",
+  type: "Bug"
 };
 
 const initialComments = [
