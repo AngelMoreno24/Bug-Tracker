@@ -52,9 +52,9 @@ const ProjectTicketDetails = () => {
             //setProjectDescription(projectInfo.description)
             // If it's a single object
             const filteredTicket = {
-              createdBy: ticketDetails.createdBy,
-              assignedTo: ticketDetails.assignedTo,
-              projectId: ticketDetails.projectId,
+              createdBy: ticketDetails.createdBy.name,
+              assignedTo: ticketDetails.assignedTo.name,
+              projectId: ticketDetails.projectId.name,
               priority: ticketDetails.priority,
               status: ticketDetails.status,
               type: ticketDetails.type,
@@ -134,7 +134,7 @@ const ProjectTicketDetails = () => {
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(ticketInfo).map(([key, value]) => (
             <div key={key} className="bg-blue-100 p-3 rounded-lg shadow-inner">
-              <p className="font-semibold text-sm">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
+              <p className="font-bold text-sm">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
               <p className="text-base">{value}</p>
             </div>
           ))}

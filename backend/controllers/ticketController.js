@@ -18,7 +18,7 @@ export const createTicket = async (req, res) => {
       description,
       priority,
       createdBy: req.user._id,
-      assignedTo,
+      assignedTo: req.user._id,
     });
 
     await ticket.save();
@@ -51,6 +51,9 @@ export const getTicketDetails = async (req, res) => {
     const { ticketId } = req.params;
 
     const ticket = await Ticket.findById( ticketId )
+    .populate("createdBy", "name")
+    .populate("projectId", "name")
+    .populate("assignedTo", "name");
 
     res.json(ticket);
   } catch (err) {
