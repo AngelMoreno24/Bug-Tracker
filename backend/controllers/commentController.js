@@ -52,7 +52,7 @@ export const getComments = async (req, res) => {
 // -------------------------
 // Get users comments
 // -------------------------
-export const getUserTickets = async (req, res) => {
+export const getUserComments = async (req, res) => {
   try {
 
     const comment = await Comment.find( { author: req.user._id } )
