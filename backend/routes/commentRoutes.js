@@ -19,7 +19,7 @@ router.post("/", createComment);
 router.get("/:ticketId", getComments);
 
 // Get assigned comment for current user
-router.get("/", getUserComments);
+router.get("/myComments", getUserComments);
 
 // Delete a comment
 router.delete("/:commentId", deleteComment);
