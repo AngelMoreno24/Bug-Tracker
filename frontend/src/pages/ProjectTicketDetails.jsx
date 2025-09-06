@@ -278,8 +278,8 @@ const ProjectTicketDetails = () => {
         </div>
         <TableRow
           values={["Commenter", "Message", "Created"]}
-          colWidths="grid-cols-[1fr_2fr_1fr]"
-          minWidths={["min-w-[120px]", "min-w-[250px]", "min-w-[160px]"]}
+          colWidths="grid-cols-[1fr_3fr_1fr]"
+          minWidths={["min-w-[120px]", "min-w-[400px]", "min-w-[160px]"]}
           isHeader
         />
         {comments.map((c, index) => (
@@ -287,9 +287,8 @@ const ProjectTicketDetails = () => {
             key={index}
             rowKey={index}
             values={[c.commenter, c.message, c.createDate]}
-            colWidths="grid-cols-[1fr_2fr_1fr]"
-            truncateCols={[1]}
-            minWidths={["min-w-[120px]", "min-w-[250px]", "min-w-[160px]"]}
+            colWidths="grid-cols-[1fr_3fr_1fr]" 
+            minWidths={["min-w-[120px]", "min-w-[400px]", "min-w-[160px]"]}
           />
         ))}
       </div>
@@ -367,11 +366,12 @@ const TableRow = ({ values, colWidths, truncateCols = [], rowKey, minWidths = []
       {values.map((val, i) => (
         <p
           key={i}
-          className={`self-center p-1 ${truncateCols.includes(i)
-              ? "text-left truncate max-w-[200px]"
+          className={`self-center p-1 ${
+            // If it's the "Message" column (index 1) → left aligned, wrapping
+            i === 1
+              ? "text-left whitespace-pre-wrap break-words"
               : "text-center"
-            } ${minWidths[i] || ""}`}
-          title={truncateCols.includes(i) ? val : undefined}
+          } ${minWidths[i] || ""}`}
         >
           {val}
         </p>
