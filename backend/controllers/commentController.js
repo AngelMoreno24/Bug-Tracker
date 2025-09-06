@@ -10,7 +10,7 @@ import ProjectMember from "../models/ProjectMemberModel.js";
 // -------------------------
 export const createComment = async (req, res) => {
   try {
-    const { ticketId, content } = req.body;
+    const { projectId, ticketId, message } = req.body;
 
     // Ensure user is part of project
     const membership = await ProjectMember.findOne({ projectId, userId: req.user._id });
@@ -19,7 +19,7 @@ export const createComment = async (req, res) => {
     const comment = new Comment({
       ticketId,
       author: req.user._id,
-      content
+      message
     });
 
     await comment.save();
@@ -41,7 +41,7 @@ export const getComments = async (req, res) => {
     const { ticketId } = req.params;
 
     const comments = await Comment.find({ ticketId })
-
+      .populate("author", "name")
     res.json(comments);
   } catch (err) {
     res.status(500).json({ message: "Error fetching comments", error: err.message });

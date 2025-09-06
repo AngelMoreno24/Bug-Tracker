@@ -7,6 +7,7 @@ import AddCommentForm from "../components/forms/AddCommentForm";
 import AddAttachmentForm from "../components/forms/AddAttachmentForm";
 
 import { getTicketDetails, updateTicket } from '../api/TicketAPI';
+import { createComment, getComments } from '../api/CommentAPI';
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -28,6 +29,7 @@ const ProjectTicketDetails = () => {
   useEffect(() => {
     if (token) {
       fetchTicketDetails();
+      fetchcommentDetails()
     }
   }, [token]);
 
@@ -41,12 +43,17 @@ const ProjectTicketDetails = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
 
+  
+
   const fetchTicketDetails = async () => {
     try {
       console.log(id)
       const ticketDetails = await getTicketDetails(id, token); // 🔑 use token from context
-      console.log(ticketDetails);
-      //const projectInfo = projects.project
+
+
+      console.log(ticketDetails.projectId._id);
+      setCommentForm({ ...commentForm, projectId: ticketDetails.projectId._id })
+
 
       //setProjectTitle(projectInfo.title)
       //setProjectDescription(projectInfo.description)
@@ -112,13 +119,91 @@ const ProjectTicketDetails = () => {
 
 
 
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Comment Details
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+  //const [title, setTitle] = useState('');
+  //const [description, setDescription] = useState('');
+
+  const fetchcommentDetails = async () => {
+    try {
+      console.log(id)
+      const commentDetails = await getComments(id, token); // 🔑 use token from context
+      console.log(commentDetails);
+      //const projectInfo = projects.project
+
+      const formattedComments = commentDetails.map((c) => {
+
+        return {
+          commenter: c.author.name,
+          message: c.message,
+          createDate: c.createdAt,
+        };
+
+      })
+      
+
+      setComments(formattedComments)
+      
+
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+    //                                          Add Comment Handler
+    /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+    const handleAddComment = async () => {
+
+        console.log(commentForm)
+
+        console.log(commentForm)
+        console.log(commentForm)
+        console.log(commentForm)
+        console.log(commentForm)
+        console.log(commentForm)
+        console.log(commentForm)
+        console.log(commentForm)
+        console.log(commentForm)
+        console.log(commentForm)
+      
+        console.log(user); 
+        
+        console.log(commentForm)
+        await createComment( commentForm, token )
+        getComments(id, token); // 🔑 use token from context
+        setCommentForm({ message: "" });
+        setAddCommentOpen(false);
+    };
+    /*ticketId
+    */
+
+
+
+
+
+
+
+
+
+
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //                                          Set Use States
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
   const [ticketInfo, setTicketInfo] = useState(ticketInfoData);
-  const [comments, setComments] = useState(initialComments);
+  const [comments, setComments] = useState([]);
   const [attachments, setAttachments] = useState(initialAttachments);
 
   const [editTicketOpen, setEditTicketOpen] = useState(false);
@@ -127,7 +212,7 @@ const ProjectTicketDetails = () => {
 
   // Form state
   const [ticketForm, setTicketForm] = useState(ticketInfoData);
-  const [commentForm, setCommentForm] = useState({ commenter: "", message: "" });
+  const [commentForm, setCommentForm] = useState({ ticketId: id,  message: "" });
   const [attachmentForm, setAttachmentForm] = useState({ file: "", uploader: "", notes: "" });
 
   const handleTicketSave = () => {
@@ -135,12 +220,12 @@ const ProjectTicketDetails = () => {
     setEditTicketOpen(false);
   };
 
-  const handleAddComment = () => {
+  /*const handleAddComment = () => {
     setComments([...comments, { ...commentForm, createDate: new Date().toISOString().slice(0, 10) }]);
     setCommentForm({ commenter: "", message: "" });
     setAddCommentOpen(false);
   };
-
+*/
   const handleAddAttachment = () => {
     setAttachments([...attachments, { ...attachmentForm, created: new Date().toISOString().slice(0, 10) }]);
     setAttachmentForm({ file: "", uploader: "", notes: "" });

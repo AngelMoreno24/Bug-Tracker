@@ -4,15 +4,6 @@ const AddCommentForm = ({ commentForm, setCommentForm }) => {
   return (
     <div>
       <div className="mb-3">
-        <label className="block text-sm font-semibold mb-1">Commenter</label>
-        <input
-          type="text"
-          className="w-full border rounded px-2 py-1"
-          value={commentForm.commenter}
-          onChange={(e) => setCommentForm({ ...commentForm, commenter: e.target.value })}
-        />
-      </div>
-      <div className="mb-3">
         <label className="block text-sm font-semibold mb-1">Message</label>
         <textarea
           className="w-full border rounded px-2 py-1"
