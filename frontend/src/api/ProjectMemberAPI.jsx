@@ -26,6 +26,31 @@ export const getProjectMembers = async (projectId, token) => {
 };
 
 
+
+// -------------------------
+// Get the members from a project
+// -------------------------
+export const getPossibleProjectMembers = async (projectId, token) => {
+  try {
+    const res = await axios.get(
+      `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${projectId}/unassigned`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ attach token
+        },
+        withCredentials: true,
+      }
+    );
+
+    return res.data.members;
+  } catch (err) {
+    console.error("Login failed:", err.response?.data || err.message);
+    return false;
+  }
+};
+
+
+
 // -------------------------
 // Add a user to the project (Manager only)
 // -------------------------
