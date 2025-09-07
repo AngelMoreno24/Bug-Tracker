@@ -22,7 +22,7 @@ const ProjectDetails = () => {
     const [users, setUsers] = useState([{}]);
     const [inviteId, setInviteId] = useState('');
 
-    const [tickets, setTickets] = useState([{}]);
+    const [tickets, setTickets] = useState([]);
 
     const [projectTitle, setProjectTitle] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
@@ -87,6 +87,13 @@ const ProjectDetails = () => {
         try {
             const tickets = await getTickets(id ,token); // 🔑 use token from context
             console.log(tickets);
+            console.log(tickets);
+            console.log(tickets);
+            console.log(tickets);
+            console.log(tickets);
+            console.log(tickets);
+            console.log(tickets);
+            console.log(tickets);
 
             setTickets(tickets)
 
@@ -118,22 +125,6 @@ const ProjectDetails = () => {
 
 
 
-
-    useEffect(() => {
-
-
-
-        const ticketsArray = [
-            { title: "Login button not working", type: "Bug", project: "Website", priority: "high", submitter: "Jane" },
-            { title: "Add dark mode", type: "Feature", project: "Dashboard", priority: "medium", submitter: "John" },
-            { title: "Fix API timeout", type: "Bug", project: "Backend API", priority: "high", submitter: "Alice" },
-            { title: "Create onboarding flow", type: "Task", project: "Mobile App", priority: "low", submitter: "Bob" },
-            { title: "Improve password strength rules", type: "Feature", project: "Authentication", priority: "medium", submitter: "Sarah" },
-            { title: "Update footer links", type: "Task", project: "Website", priority: "low", submitter: "Tom" },
-        ];
-        setTickets(ticketsArray)
-
-    }, [])
 
 
     const getColor = (role) => {
@@ -204,17 +195,16 @@ const ProjectDetails = () => {
     };
 
 
-    const ticketRow = (title, type, project, priority, submitter, key, id) => {
+    const ticketRow = (title, type, priority, submitter, key, id) => {
 
         return (
             <div
                 onClick={() => navigate(`/accounts/projects/ticket/${id}`)}
                 key={key}
-                className='grid grid-cols-5 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'
+                className='grid grid-cols-4 px-4 py-2 bg-white hover:bg-gray-100 border-t-1'
             >
                 <p className='self-center text-center'>{title}</p>
                 <p className={`self-center text-center rounded w-20 m-auto text-white ${getTypeColor(type)}`}>{type}</p>
-                <p className='self-center text-center'>{project}</p>
                 <p className={`self-center text-center rounded w-20 m-auto text-white ${getPriorityColor(priority)}`}>{priority}</p>
                 <p className='self-center text-center'>{submitter}</p>
             </div>
@@ -308,15 +298,14 @@ const ProjectDetails = () => {
                         </button>
                     </div>
                     <div className='grid grid-rows-4 '>
-                        <div className='grid grid-cols-5  px-4 py-2 h-auto border-b-1'>
+                        <div className='grid grid-cols-4  px-4 py-2 h-auto border-b-1'>
                             <p className='m-auto h-auto font-bold'>Title</p>
                             <p className='m-auto h-auto font-bold'>Type</p>
-                            <p className='m-auto h-auto font-bold'>Project</p>
                             <p className='m-auto h-auto font-bold'>Priority</p>
-                            <p className='m-auto h-auto font-bold'>Submitter</p>
+                            <p className='m-auto h-auto font-bold'>Developer</p>
                         </div>
                         {tickets.map((ticket, index) =>
-                            ticketRow(ticket.title, ticket.type, ticket.project, ticket.priority, ticket.submitter, index, ticket._id)
+                            ticketRow(ticket.title, ticket.type, ticket.priority, ticket.assignedTo.name, index, ticket._id)
                         )}
                     </div>
 

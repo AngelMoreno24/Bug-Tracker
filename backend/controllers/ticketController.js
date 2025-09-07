@@ -36,6 +36,7 @@ export const getTickets = async (req, res) => {
     const { projectId } = req.params;
 
     const tickets = await Ticket.find({ projectId })
+    .populate("assignedTo", "name");
 
     res.json(tickets);
   } catch (err) {
