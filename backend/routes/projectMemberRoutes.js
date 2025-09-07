@@ -3,7 +3,8 @@ import {
     getProjectMembers,
     addProjectMember,
     removeProjectMember, 
-    editProjectMembers
+    editProjectMembers,
+    getPossibleProjectMembers
 } from "../controllers/projectMemberController.js";
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
 import { authorizeRoles } from "../middleware/roleMiddleware.js"; 
@@ -17,5 +18,6 @@ router.get("/:projectId", getProjectMembers);
 router.post("/:id/members", authorizeRoles("Manager", "Admin"),addProjectMember);
 router.delete("/:id/members", authorizeRoles("Manager", "Admin"), removeProjectMember);
 router.put("/:id/edit", authorizeRoles("Manager", "Admin"), editProjectMembers);
+router.get("/:id/unassigned", authorizeRoles("Manager", "Admin"), getPossibleProjectMembers);
 
 export default router;

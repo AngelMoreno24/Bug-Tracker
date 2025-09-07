@@ -1,4 +1,6 @@
 import ProjectMember from "../models/ProjectMemberModel.js";
+import CompanyMember from "../models/CompanyMemberModel.js";
+import Company from "../models/CompanyModel.js";
 
 
 // -------------------------
@@ -70,6 +72,73 @@ export const getProjectMembers = async (req, res) => {
 };
 
 
+
+// -------------------------
+// Get the members from a project
+// -------------------------
+export const getPossibleProjectMembers = async (req, res) => {
+  try {
+
+    //Retrieve all project members assigned to project
+    const { projectId } = req.params;
+
+    const assignedMembers = await ProjectMember.find({ projectId })
+      .populate("userId", "name"); // only fetch `name` field from User
+
+    // Map into a clean array
+    const formattedMembers = assignedMembers.map((member) => ({
+      id: member.userId._id,
+      name: member.userId.name
+    }));
+
+
+    //retrieve all company members not assigned to current project
+
+    const company = await Company.findOne({ ownerId: req.user._id });
+    if (!company) return res.status(403).json({ message: "No company found for admin" });
+
+
+    const companyMembers = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role");
+
+    const simplifiedMembers = members.map(m => ({
+      id: m._id,
+      name: m.userId.name
+    }));
+
+    // filter out the assigned members
+    //const unassignedMembers = companyMembers.filter(value => !value.includes(assignedMembers.userId._id));
+    const unassignedMembers = simplifiedMembers.filter(({ name }) => !formattedMembers.some((e) => e.name === name))
+
+
+    res.json({ unassignedMembers: unassignedMembers });
+
+
+
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching members", error: err.message });
+  }
+};
+
+export const listCompanyMembers = async (req, res) => {
+  try {
+    const company = await Company.findOne({ ownerId: req.user._id });
+    if (!company) return res.status(403).json({ message: "No company found for admin" });
+
+    const members = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role");
+    // Simplify data
+    const simplifiedMembers = members.map(m => ({
+      id: m._id,
+      name: m.userId.name,
+      email: m.userId.email,
+      role: m.role
+    }));
+
+    res.json({ members: simplifiedMembers });
+  } catch (error) {
+    console.error("List company members error:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 
 
 // -------------------------
