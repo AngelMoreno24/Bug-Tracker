@@ -18,6 +18,6 @@ router.get("/:projectId", getProjectMembers);
 router.post("/:id/members", authorizeRoles("Manager", "Admin"),addProjectMember);
 router.delete("/:id/members", authorizeRoles("Manager", "Admin"), removeProjectMember);
 router.put("/:id/edit", authorizeRoles("Manager", "Admin"), editProjectMembers);
-router.get("/:id/unassigned", authorizeRoles("Manager", "Admin"), getPossibleProjectMembers);
+router.get("/:projectId/unassigned", getPossibleProjectMembers);
 
 export default router;

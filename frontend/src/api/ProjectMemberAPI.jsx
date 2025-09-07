@@ -26,7 +26,6 @@ export const getProjectMembers = async (projectId, token) => {
 };
 
 
-
 // -------------------------
 // Get the members from a project
 // -------------------------
@@ -42,13 +41,12 @@ export const getPossibleProjectMembers = async (projectId, token) => {
       }
     );
 
-    return res.data.members;
+    return res.data.unassignedMembers;
   } catch (err) {
     console.error("Login failed:", err.response?.data || err.message);
     return false;
   }
 };
-
 
 
 // -------------------------
@@ -98,8 +96,6 @@ export const removeProjectMember = async (projectId, userId, token) => {
     return false;
   }
 };
-
-
 
 
 // -------------------------

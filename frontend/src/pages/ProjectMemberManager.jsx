@@ -1,20 +1,25 @@
 import React, {useState, useEffect} from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from "../hooks/useAuth"; 
 import { listCompanyMembers } from '../api/CompanyMemberAPI';
+import { getPossibleProjectMembers, getProjectMembers } from '../api/ProjectMemberAPI'
+
 
 const UserManager = () => {
   const navigate = useNavigate();
 
-  const [users, setUsers] = useState([{}]);
+  const [users, setUsers] = useState([]);
   const [inviteId, setInviteId] = useState('');
   const [filter, setFilter] = useState('');
+
+  const { id } = useParams();  // <-- grabs "id" from the URL
+
 
   // retrieves token and user data from authContext
   const {  token  } = useAuth();
 
 
-  const [projectMembers, setProjectMembers] = useState([{}]);
+  const [projectMembers, setProjectMembers] = useState([]);
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //                         Fetches destails for Company members
@@ -22,19 +27,20 @@ const UserManager = () => {
   useEffect(() => {
       if (token) {
           fetchProjectMembers();
+          fetchPossibleProjectMembers();
       }
   }, [token]);
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                          Member Details
+  //                                         Assiged Member Details
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   const fetchProjectMembers = async () => {
     try {
-        const members = await listCompanyMembers(token); // 🔑 use token from context
-        console.log(members.members);
+        const members = await getProjectMembers(id, token); // 🔑 use token from context
+        console.log(members);
 
-        setUsers(members.members)
+        setUsers(members)
 
 
     } catch (err) {
@@ -42,6 +48,26 @@ const UserManager = () => {
     }
   };
 
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                        Unassigned Member Details
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+  const [unassignedProjectMembers, setUnassignedProjectMembers] = useState([]);
+  
+  const fetchPossibleProjectMembers = async () => {
+    try {
+        const members = await getPossibleProjectMembers(id, token); // 🔑 use token from context
+        console.log(members);
+
+        setUnassignedProjectMembers(members)
+
+
+    } catch (err) {
+        console.error(err.message);
+    }
+  };
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -141,11 +167,19 @@ const getColor = (role) => {
             </select>
                 
             </div>
+
+            {
+
+            /////////////////////////////////////////////////////////////////////////////////////////////////
+            //                                          List Unassigned Users
+            /////////////////////////////////////////////////////////////////////////////////////////////////
+
+            }
             <div className='grid grid-rows-4 '>
                 
                 <div>
                     <div className="flex flex-wrap gap-2">
-                        {users.map((user, index) =>
+                        {unassignedProjectMembers.map((user, index) =>
                         row(user.name, user.role, "", index)
                         )}
                     </div>

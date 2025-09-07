@@ -82,6 +82,7 @@ export const getPossibleProjectMembers = async (req, res) => {
     //Retrieve all project members assigned to project
     const { projectId } = req.params;
 
+    
     const assignedMembers = await ProjectMember.find({ projectId })
       .populate("userId", "name"); // only fetch `name` field from User
 
@@ -100,17 +101,18 @@ export const getPossibleProjectMembers = async (req, res) => {
 
     const companyMembers = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role");
 
-    const simplifiedMembers = members.map(m => ({
+    const simplifiedMembers = companyMembers.map(m => ({
       id: m._id,
       name: m.userId.name
     }));
 
+    console.log(simplifiedMembers)
     // filter out the assigned members
     //const unassignedMembers = companyMembers.filter(value => !value.includes(assignedMembers.userId._id));
     const unassignedMembers = simplifiedMembers.filter(({ name }) => !formattedMembers.some((e) => e.name === name))
 
 
-    res.json({ unassignedMembers: unassignedMembers });
+    res.json({ unassignedMembers });
 
 
 
