@@ -16,6 +16,7 @@ import { useAuth } from "../hooks/useAuth";
 const ProjectTicketDetails = () => {
 
 
+  const navigate = useNavigate();
 
   // retrieves token and user data from authContext
   const { user, token } = useAuth();
@@ -44,6 +45,8 @@ const ProjectTicketDetails = () => {
   const [description, setDescription] = useState('');
 
   
+  const [projectId, setProjectId] = useState('');
+  const [projectName, setProjectName] = useState('');
 
   const fetchTicketDetails = async () => {
     try {
@@ -54,7 +57,8 @@ const ProjectTicketDetails = () => {
       console.log(ticketDetails.projectId._id);
       setCommentForm({ ...commentForm, projectId: ticketDetails.projectId._id })
 
-
+      setProjectId(ticketDetails.projectId._id)
+      setProjectName(ticketDetails.projectId.name)
       //setProjectTitle(projectInfo.title)
       //setProjectDescription(projectInfo.description)
       // If it's a single object
@@ -235,6 +239,12 @@ const ProjectTicketDetails = () => {
   return (
     <div className="p-6 box-border min-w-[790px]">
 
+      <h1
+        onClick={()=>{navigate(`/accounts/projects/${projectId}`)}}
+        className='text-blue-500 font-bold text-3xl mb-5'
+      >
+        {projectName}
+      </h1>
 
       {/* Project Detail */}
       <div className="border rounded-xl shadow-sm p-6 bg-white mb-6 box-border min-w-[770px]">
