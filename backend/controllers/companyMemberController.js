@@ -29,7 +29,7 @@ export const addCompanyMember = async (req, res) => {
     const member = await CompanyMember.create({
       userId: userToAdd._id,
       companyId: company._id,
-      role,
+      role: role,
     });
 
     res.status(201).json({ message: "Member added", member });

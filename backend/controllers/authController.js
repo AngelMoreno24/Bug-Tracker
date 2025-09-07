@@ -39,7 +39,7 @@ export const register = async (req, res) => {
       name,
       email,
       password: hashedPassword,
-      role,
+      role: "admin",
     });
 
     // Create a company owned by this user

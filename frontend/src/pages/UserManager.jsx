@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react'
 
-import { listCompanyMembers } from '../api/CompanyMemberAPI';
+import { listCompanyMembers, addCompanyMember } from '../api/CompanyMemberAPI';
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -91,7 +91,7 @@ const getColor = (role) => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    alert(`You typed: ${inviteId}`);
+    addCompanyMember(inviteId,"Developer", token)
   };
   return (
     <div>
