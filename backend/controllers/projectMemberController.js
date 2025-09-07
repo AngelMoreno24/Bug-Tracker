@@ -106,7 +106,6 @@ export const getPossibleProjectMembers = async (req, res) => {
       name: m.userId.name
     }));
 
-    console.log(simplifiedMembers)
     // filter out the assigned members
     //const unassignedMembers = companyMembers.filter(value => !value.includes(assignedMembers.userId._id));
     const unassignedMembers = simplifiedMembers.filter(({ name }) => !formattedMembers.some((e) => e.name === name))
