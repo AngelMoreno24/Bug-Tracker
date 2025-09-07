@@ -40,11 +40,11 @@ const Tickets = () => {
 
   const getTypeColor = (type) => {
   switch (type) {
-    case "Bug":
+    case "bug":
       return "bg-red-600 font-bold";
-    case "Feature":
+    case "feature":
       return "bg-green-600 font-bold";
-    case "Task":
+    case "task":
       return "bg-blue-600 font-bold";
     default:
       return "bg-gray-600 font-bold";
@@ -53,6 +53,8 @@ const Tickets = () => {
 
   const getPriorityColor = (priority) => {
     switch (priority) {
+      case "critical":
+        return "bg-black font-bold";
       case "high":
         return "bg-red-600 font-bold";
       case "medium":
