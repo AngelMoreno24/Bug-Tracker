@@ -240,10 +240,12 @@ const ProjectTicketDetails = () => {
     <div className="p-6 box-border min-w-[790px]">
 
       <h1
-        onClick={()=>{navigate(`/accounts/projects/${projectId}`)}}
-        className='text-blue-500 font-bold text-3xl mb-5'
+        onClick={() => navigate(`/accounts/projects/${projectId}`)}
+        className="text-2xl font-bold text-center mb-6 cursor-pointer 
+                  bg-blue-500 text-white px-6 py-2 rounded-lg shadow-md 
+                  hover:bg-blue-600 active:scale-95 transition-all duration-200 w-fit mx-auto"
       >
-        {projectName}
+        ← Return to Project
       </h1>
 
       {/* Project Detail */}
