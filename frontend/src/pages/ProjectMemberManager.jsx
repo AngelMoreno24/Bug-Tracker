@@ -3,7 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from "../hooks/useAuth"; 
 import { listCompanyMembers } from '../api/CompanyMemberAPI';
 import { getPossibleProjectMembers, getProjectMembers } from '../api/ProjectMemberAPI'
+import AddProjectMemberForm from "../components/forms/AddProjectMemberForm";
 
+import Modal from "../components/Modal"; // adjust the path as needed
 
 const UserManager = () => {
   const navigate = useNavigate();
@@ -69,10 +71,32 @@ const UserManager = () => {
     }
   };
 
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Assign Role Modal
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const [addProjectMemberOpen, setAddProjectMemberOpen] = useState(false);
+  const [projectMemberForm, setProjectMemberForm] = useState({ name: "", role: "" });
+
+  const handleAddProjectMember = async (name, key) =>{
+
+    console.log(projectMemberForm)
+
+    //await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
+    //await fetchProjects()
+
+
+    setProjectMemberForm({ name: "", role: "" });
+    setAddProjectMemberOpen(false);
+  }
 
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //                                          Other
   /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
 
 
 
@@ -115,7 +139,7 @@ const getColor = (role) => {
     if(userRole == roleCategory || roleCategory == "")
     return (
       <div
-        onClick={() => handleClick(name)}
+        onClick={() => setAddProjectMemberOpen(true)}
         key={key}
         className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
       >
@@ -232,6 +256,12 @@ const getColor = (role) => {
             </div>
             
         </div>
+        
+      {addProjectMemberOpen && (
+        <Modal title="Add Attachment" onClose={() => setAddProjectMemberOpen(false)} onSave={handleAddProjectMember}>
+          <AddProjectMemberForm projectMemberForm={projectMemberForm} setProjectMemberForm={setProjectMemberForm} />
+        </Modal>
+      )}
     </div>
   )
 }
