@@ -68,3 +68,25 @@ export const getProjectMembers = async (req, res) => {
     res.status(500).json({ message: "Error fetching members", error: err.message });
   }
 };
+
+
+
+
+// -------------------------
+// Edit a members from a project
+// -------------------------
+export const editProjectMembers = async (req, res) => {
+  try {
+    const { memberId } = req.params;
+    const updates = req.body;
+
+    
+    const member = await ProjectMember.findByIdAndUpdate(memberId, updates, { new: true })
+
+    if (!member) return res.status(404).json({ message: "Member not found" });
+
+    res.json(member);
+  } catch (err) {
+    res.status(500).json({ message: "Error updating members", error: err.message });
+  }
+};
