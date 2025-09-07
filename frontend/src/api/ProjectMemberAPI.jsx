@@ -73,3 +73,30 @@ export const removeProjectMember = async (projectId, userId, token) => {
     return false;
   }
 };
+
+
+
+
+// -------------------------
+// Edit a member from the project 
+// -------------------------
+
+export const editProjectMember = async (projectId, updates, token) => {
+  try {
+    const res = await axios.put(
+      `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${projectId}/edit`,
+      { updates }, // body
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    console.error("Add member failed:", err.response?.data || err.message);
+    return false;
+  }
+};

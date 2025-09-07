@@ -3,6 +3,7 @@ import {
     getProjectMembers,
     addProjectMember,
     removeProjectMember, 
+    editProjectMembers
 } from "../controllers/projectMemberController.js";
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
 import { authorizeRoles } from "../middleware/roleMiddleware.js"; 
@@ -15,5 +16,6 @@ router.use(authenticateToken);
 router.get("/:projectId", getProjectMembers);
 router.post("/:id/members", authorizeRoles("Manager", "Admin"),addProjectMember);
 router.delete("/:id/members", authorizeRoles("Manager", "Admin"), removeProjectMember);
+router.put("/:id/edit", authorizeRoles("Manager", "Admin"), editProjectMembers);
 
 export default router;
