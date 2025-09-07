@@ -1,5 +1,7 @@
 import React, {useState, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from "../hooks/useAuth"; 
+import { listCompanyMembers } from '../api/CompanyMemberAPI';
 
 const UserManager = () => {
   const navigate = useNavigate();
@@ -7,6 +9,47 @@ const UserManager = () => {
   const [users, setUsers] = useState([{}]);
   const [inviteId, setInviteId] = useState('');
   const [filter, setFilter] = useState('');
+
+  // retrieves token and user data from authContext
+  const {  token  } = useAuth();
+
+
+  const [projectMembers, setProjectMembers] = useState([{}]);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                         Fetches destails for Company members
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  useEffect(() => {
+      if (token) {
+          fetchProjectMembers();
+      }
+  }, [token]);
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Member Details
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+  const fetchProjectMembers = async () => {
+    try {
+        const members = await listCompanyMembers(token); // 🔑 use token from context
+        console.log(members.members);
+
+        setUsers(members.members)
+
+
+    } catch (err) {
+        console.error(err.message);
+    }
+  };
+
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                          Other
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
 
 
   useEffect(() => {
@@ -43,7 +86,7 @@ const getColor = (role) => {
 
   const row = (name, userRole, roleCategory, key) => {
     
-    if(userRole == roleCategory)
+    if(userRole == roleCategory || roleCategory == "")
     return (
       <div
         onClick={() => handleClick(name)}
