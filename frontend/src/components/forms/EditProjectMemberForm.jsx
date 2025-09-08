@@ -1,81 +1,47 @@
-import React from "react"; 
+import React, { useState, useEffect } from "react";
+import { useParams, useNavigate } from 'react-router-dom';
 
-const AddTicketForm = ({ ticketForm, setTicketForm }) => {
+import { useAuth } from "../../hooks/useAuth";
+
+import { getProjectMembers } from "../../api/ProjectMemberAPI";
+
+
+const EditProjectMemberForm = ({ editProjectMemberForm, setEditProjectMemberForm }) => {
+
+  const { user, token } = useAuth();
+  
   return (
     <div>
       
-      {/* Title */}
+      {/* Role Select */}
       <div className="mb-3">
-        <label className="block text-sm font-semibold mb-1">Title</label>
-        <input
-          type="text"
-          className="w-full border rounded px-2 py-1"
-          value={ticketForm.title}
-          onChange={(e) => setTicketForm({ ...ticketForm, title: e.target.value })}
-        />
-      </div>
-
-      {/* Description */}
-      <div className="mb-3">
-        <label className="block text-sm font-semibold mb-1">Description</label>
-        <textarea
-          className="w-full border rounded px-2 py-1"
-          value={ticketForm.description}
-          onChange={(e) => setTicketForm({ ...ticketForm, description: e.target.value })}
-        />
-      </div>
-
-      {/* Type Select */}
-      <div className="mb-3">
-        <label className="block text-sm font-semibold mb-1">Type</label>
+        <label className="block text-sm font-semibold mb-1">Role</label>
         <select
           className="w-full border rounded px-2 py-1"
-          value={ticketForm.type || ""}
+          value={editProjectMemberForm.role || ""}
+          required
           onChange={(e) =>
-            setTicketForm({ ...ticketForm, type: e.target.value })
+            setEditProjectMemberForm({ ...editProjectMemberForm, role: e.target.value })
           }
-        > 
-          <option value="bug">
-            bug
+        >
+          <option value="" disabled hidden>
+            Choose a Role
           </option>
-          <option value={"feature"}>
-            feature
-          </option>
-          <option value={"task"}>
-            task
-          </option>
-          <option value={"improvement"}>
-            improvement
-          </option>
+          <option value="Admin">Admin</option>
+          <option value="Manager">Manager</option> 
+          <option value="Developer">Developer</option>
+          <option value="Submitter">Submitter</option>  
         </select>
-      </div>
-      
-      {/* Priority Select */}
-      <div className="mb-3">
-        <label className="block text-sm font-semibold mb-1">Priority</label>
-        <select
-          className="w-full border rounded px-2 py-1"
-          value={ticketForm.priority || ""}
-          onChange={(e) =>
-            setTicketForm({ ...ticketForm, priority: e.target.value })
-          }
-        > 
-          <option value="low">
-            low
-          </option>
-          <option value={"medium"}>
-            medium
-          </option>
-          <option value={"high"}>
-            high
-          </option>
-          <option value={"critical"}>
-            critical
-          </option>
-        </select>
+                
+        <button
+            className="px-4 py-2 bg-red-500 text-white rounded hover:bg-red-600 mt-3"
+            onClick={()=>{alert("Deleting")}}
+        >
+            Delete
+        </button>
       </div>
     </div>
   );
 };
 
-export default AddTicketForm;
+export default EditProjectMemberForm;

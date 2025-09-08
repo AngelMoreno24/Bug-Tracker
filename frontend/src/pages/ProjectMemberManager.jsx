@@ -4,6 +4,7 @@ import { useAuth } from "../hooks/useAuth";
 import { listCompanyMembers } from '../api/CompanyMemberAPI';
 import { getPossibleProjectMembers, getProjectMembers, addProjectMember } from '../api/ProjectMemberAPI'
 import AddProjectMemberForm from "../components/forms/AddProjectMemberForm";
+import EditProjectMemberForm from "../components/forms/EditProjectMemberForm"
 
 import Modal from "../components/Modal"; // adjust the path as needed
 const UserManager = () => {
@@ -39,17 +40,6 @@ const UserManager = () => {
   const fetchProjectMembers = async () => {
     try {
         const members = await getProjectMembers(id, token); // 🔑 use token from context
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        console.log(members);
 
         setUsers(members)
 
@@ -123,17 +113,50 @@ const UserManager = () => {
     );
   };
   /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                          Other
+  //                                    edit assigned users
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+  const [editProjectMemberOpen, setEditProjectMemberOpen] = useState(false);
+  const [editProjectMemberForm, setEditProjectMemberForm] = useState();
+
+  const handleEditProjectMember = async (name, key) =>{
+
+    console.log(editProjectMemberForm)
+
+    
+    //await addProjectMember(id, projectMemberForm.id, projectMemberForm.role, token)
+    //await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
+    //await fetchProjects() 
+
+
+    setEditProjectMemberForm({ name: "", role: "" });
+    setEditProjectMemberOpen(false);
+  }
+const row = (name, userRole, roleCategory, key) => {
+  if (userRole == roleCategory || roleCategory == "")
+    return (
+      <div
+        onClick={() => {
+          setEditProjectMemberOpen(true);
+          setEditProjectMemberForm({
+            name: name,
+            role: userRole || ""   // ✅ fallback to empty (placeholder)
+          });
+        }}
+        key={key}
+        className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
+      >
+        <p className="flex flex-wrap">{name}</p>
+      </div>
+    );
+};
 
 
 
-
-
-
-
+  /////////////////////////////////////////////////////////////////////////////////////////////////
+  //                                    Set Color Based On User Role
+  /////////////////////////////////////////////////////////////////////////////////////////////////
 
 const getColor = (role) => {
   switch (role) {
@@ -150,37 +173,9 @@ const getColor = (role) => {
   }
 };
 
-  const row = (name, userRole, roleCategory, key) => {
-    
-    if(userRole == roleCategory || roleCategory == "")
-    return (
-      <div
-        onClick={() => {
-          setAddProjectMemberOpen(true)
-          setProjectMemberForm({name: name, role: "developer"} )
-      }}
-        key={key}
-        className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
-      >
-        <p className="flex flex-wrap">{name}</p>
-      </div>
-    );
-  };
 
 
 
-
-
-  const handleClick = (title) => {
-    alert(`You clicked on: ${title}`);
-  };
-
-
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    alert(`You typed: ${inviteId}`);
-  };
- 
   const handleFilter = async (e) => {
     e.preventDefault();
     await setFilter(e.target.value);
@@ -283,6 +278,12 @@ const getColor = (role) => {
       {addProjectMemberOpen && (
         <Modal title={projectMemberForm.name} onClose={() => setAddProjectMemberOpen(false)} onSave={handleAddProjectMember}>
           <AddProjectMemberForm projectMemberForm={projectMemberForm} setProjectMemberForm={setProjectMemberForm} />
+        </Modal>
+      )}
+
+      {editProjectMemberOpen && (
+        <Modal title={editProjectMemberForm.name} onClose={() => setEditProjectMemberOpen(false)} onSave={handleEditProjectMember}>
+          <EditProjectMemberForm editProjectMemberForm={editProjectMemberForm} setEditProjectMemberForm={setEditProjectMemberForm} />
         </Modal>
       )}
     </div>
