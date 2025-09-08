@@ -55,7 +55,7 @@ export const getPossibleProjectMembers = async (projectId, token) => {
 export const addProjectMember = async (projectId, userId, role, token) => {
   try {
     const res = await axios.post(
-      `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${projectId}`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${projectId}/members`,
       { userId, role }, // body
       {
         headers: {

@@ -13,16 +13,22 @@ export const addProjectMember = async (req, res) => {
 
     // Only Manager can add members
     const membership = await ProjectMember.findOne({ projectId, userId: req.user._id });
-    if (!membership || membership.role !== "Manager") {
-      return res.status(403).json({ message: "Only Managers can add members" });
+    if (!membership  ) {
+      return res.status(403).json({ message: "Not a member of project" });
     }
 
-    // Prevent duplicates
-    const existingMember = await ProjectMember.findOne({ projectId, userId });
-    if (existingMember) return res.status(400).json({ message: "User already in project" });
+    if ( membership.role == "Manager" || membership.role == "Admin"  ) {
+      // Prevent duplicates
+      const existingMember = await ProjectMember.findOne({ projectId, userId });
+      if (existingMember) return res.status(400).json({ message: "User already in project" });
 
-    const newMember = await ProjectMember.create({ projectId, userId, role });
-    res.status(201).json({ message: "Member added", member: newMember });
+      const newMember = await ProjectMember.create({ projectId, userId, role });
+      res.status(201).json({ message: "Member added", member: newMember });
+    }else{
+      
+      return res.status(403).json({ message: "Only Managers and Admins can add members" });
+    }
+
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
@@ -99,16 +105,17 @@ export const getPossibleProjectMembers = async (req, res) => {
     if (!company) return res.status(403).json({ message: "No company found for admin" });
 
 
-    const companyMembers = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role");
+    const companyMembers = await CompanyMember.find({ companyId: company._id }).populate("userId", "id name email role");
 
     const simplifiedMembers = companyMembers.map(m => ({
-      id: m._id,
+      id: m.userId.id,
       name: m.userId.name
     }));
 
     // filter out the assigned members
     //const unassignedMembers = companyMembers.filter(value => !value.includes(assignedMembers.userId._id));
     const unassignedMembers = simplifiedMembers.filter(({ name }) => !formattedMembers.some((e) => e.name === name))
+
 
 
     res.json({ unassignedMembers });
@@ -120,26 +127,6 @@ export const getPossibleProjectMembers = async (req, res) => {
   }
 };
 
-export const listCompanyMembers = async (req, res) => {
-  try {
-    const company = await Company.findOne({ ownerId: req.user._id });
-    if (!company) return res.status(403).json({ message: "No company found for admin" });
-
-    const members = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role");
-    // Simplify data
-    const simplifiedMembers = members.map(m => ({
-      id: m._id,
-      name: m.userId.name,
-      email: m.userId.email,
-      role: m.role
-    }));
-
-    res.json({ members: simplifiedMembers });
-  } catch (error) {
-    console.error("List company members error:", error);
-    res.status(500).json({ message: "Server error" });
-  }
-};
 
 
 // -------------------------

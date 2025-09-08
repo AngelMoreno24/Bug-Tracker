@@ -27,7 +27,7 @@ const ProjectDetails = () => {
     const [projectTitle, setProjectTitle] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
 
-    const [projectMembers, setProjectMembers] = useState([{}]);
+    const [projectMembers, setProjectMembers] = useState([]);
  
     /////////////////////////////////////////////////////////////////////////////////////////////////
     //                         Fetches destails for project, members, and tickets
@@ -70,7 +70,7 @@ const ProjectDetails = () => {
             const members = await getProjectMembers(id ,token); // 🔑 use token from context
             console.log(members);
 
-            setProjectMembers(members)
+            //setProjectMembers(members)
 
 
         } catch (err) {

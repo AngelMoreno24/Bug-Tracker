@@ -2,11 +2,10 @@ import React, {useState, useEffect} from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from "../hooks/useAuth"; 
 import { listCompanyMembers } from '../api/CompanyMemberAPI';
-import { getPossibleProjectMembers, getProjectMembers } from '../api/ProjectMemberAPI'
+import { getPossibleProjectMembers, getProjectMembers, addProjectMember } from '../api/ProjectMemberAPI'
 import AddProjectMemberForm from "../components/forms/AddProjectMemberForm";
 
 import Modal from "../components/Modal"; // adjust the path as needed
-
 const UserManager = () => {
   const navigate = useNavigate();
 
@@ -41,6 +40,16 @@ const UserManager = () => {
     try {
         const members = await getProjectMembers(id, token); // 🔑 use token from context
         console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
+        console.log(members);
 
         setUsers(members)
 
@@ -62,7 +71,8 @@ const UserManager = () => {
     try {
         const members = await getPossibleProjectMembers(id, token); // 🔑 use token from context
         console.log(members);
-
+        console.log(members);
+        console.log(members);
         setUnassignedProjectMembers(members)
 
 
@@ -76,20 +86,42 @@ const UserManager = () => {
   /////////////////////////////////////////////////////////////////////////////////////////////////
 
   const [addProjectMemberOpen, setAddProjectMemberOpen] = useState(false);
-  const [projectMemberForm, setProjectMemberForm] = useState({ name: "", role: "" });
+  const [projectMemberForm, setProjectMemberForm] = useState();
 
   const handleAddProjectMember = async (name, key) =>{
 
     console.log(projectMemberForm)
 
+    
+    await addProjectMember(id, projectMemberForm.id, projectMemberForm.role, token)
     //await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
-    //await fetchProjects()
+    //await fetchProjects() 
 
 
     setProjectMemberForm({ name: "", role: "" });
     setAddProjectMemberOpen(false);
   }
 
+  
+
+  const unassignedRow = (name, userRole, roleCategory, key, id) => {
+    
+
+
+    console.log(id)
+    return (
+      <div
+        onClick={() => {
+          setAddProjectMemberOpen(true)
+          setProjectMemberForm({name: name, role: "Developer", id:id} )
+      }}
+        key={key}
+        className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
+      >
+        <p className="flex flex-wrap">{name}</p>
+      </div>
+    );
+  };
   /////////////////////////////////////////////////////////////////////////////////////////////////
   //                                          Other
   /////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,22 +133,6 @@ const UserManager = () => {
 
 
 
-
-  useEffect(() => {
-
-    const array = [
-      { name: "Alice Johnson", role: "Admin" },
-      { name: "Bob Smith", role: "Developer" },
-      { name: "Charlie Brown", role: "Manager" },
-      { name: "Diana Prince", role: "Submitter" },
-      { name: "Ethan Clark", role: "Developer" },
-      { name: "Fiona Lee", role: "Submitter" },    
-      { name: "Bruce Wayne", role: "" },
-      { name: "Bruce Banner", role: "" },
-      { name: "Tony Stark", role: "" },
-    ];
-    setUsers(array)
-  },[])
 
 
 const getColor = (role) => {
@@ -139,7 +155,10 @@ const getColor = (role) => {
     if(userRole == roleCategory || roleCategory == "")
     return (
       <div
-        onClick={() => setAddProjectMemberOpen(true)}
+        onClick={() => {
+          setAddProjectMemberOpen(true)
+          setProjectMemberForm({name: name, role: "developer"} )
+      }}
         key={key}
         className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
       >
@@ -147,6 +166,10 @@ const getColor = (role) => {
       </div>
     );
   };
+
+
+
+
 
   const handleClick = (title) => {
     alert(`You clicked on: ${title}`);
@@ -204,7 +227,7 @@ const getColor = (role) => {
                 <div>
                     <div className="flex flex-wrap gap-2">
                         {unassignedProjectMembers.map((user, index) =>
-                        row(user.name, user.role, "", index)
+                        unassignedRow(user.name, user.role, "", index, user.id)
                         )}
                     </div>
                 </div>
@@ -258,7 +281,7 @@ const getColor = (role) => {
         </div>
         
       {addProjectMemberOpen && (
-        <Modal title="Add Attachment" onClose={() => setAddProjectMemberOpen(false)} onSave={handleAddProjectMember}>
+        <Modal title={projectMemberForm.name} onClose={() => setAddProjectMemberOpen(false)} onSave={handleAddProjectMember}>
           <AddProjectMemberForm projectMemberForm={projectMemberForm} setProjectMemberForm={setProjectMemberForm} />
         </Modal>
       )}

@@ -12,16 +12,16 @@ const AddProjectMemberForm = ({ projectMemberForm, setProjectMemberForm }) => {
         <label className="block text-sm font-semibold mb-1">Role</label>
         <select
           className="w-full border rounded px-2 py-1"
-          value={projectMemberForm.status || ""}
+          value={projectMemberForm.role || ""}
           onChange={(e) =>
             setProjectMemberForm({ ...projectMemberForm, role: e.target.value })
           }
         > 
-          <option value="manager">
-            manager
+          <option value={"Developer"}>
+            Developer
           </option>
-          <option value={"developer"}>
-            developer
+          <option value="Manager">
+            Manager
           </option>
         </select>
       </div>
