@@ -81,8 +81,8 @@ export const removeProjectMember = async (projectId, userId, token) => {
   try {
     const res = await axios.delete(
       `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${projectId}`,
-      { userId }, // body
       {
+        data: { userId },
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -92,7 +92,7 @@ export const removeProjectMember = async (projectId, userId, token) => {
 
     return res.data;
   } catch (err) {
-    console.error("Add member failed:", err.response?.data || err.message);
+    console.error("Remove member failed:", err.response?.data || err.message);
     return false;
   }
 };

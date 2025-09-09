@@ -43,8 +43,8 @@ export const removeProjectMember = async (req, res) => {
     const { userId } = req.body;
 
     const membership = await ProjectMember.findOne({ projectId, userId: req.user._id });
-    if (!membership || membership.role !== "Manager") {
-      return res.status(403).json({ message: "Only Managers can remove members" });
+    if (!membership || (membership.role !== "Manager" && membership.role !== "Admin")) {
+      return res.status(403).json({ message: "Only Managers or Admins can remove members" });
     }
 
     await ProjectMember.findOneAndDelete({ projectId, userId });
