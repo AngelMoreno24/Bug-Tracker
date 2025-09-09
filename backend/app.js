@@ -11,6 +11,7 @@ import activityLogRoutes from "./routes/activityLogRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import companyMemberRoutes from "./routes/companyMemberRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
+import dashboardRoutes from "./routes/dashboardRoutes.js";
 
 
 
@@ -37,6 +38,7 @@ app.use("/api/activityLog", activityLogRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/companyMembers", companyMemberRoutes);
 app.use("/api/comments", commentRoutes);
+app.use("/api/dashboard", dashboardRoutes);
 
 
 export default app;
