@@ -1,174 +1,97 @@
-import React, {useState, useEffect} from 'react'
-
+import React, { useState, useEffect } from 'react';
+import { useAuth } from "../hooks/useAuth";
 import { listCompanyMembers, addCompanyMember } from '../api/CompanyMemberAPI';
 
-import { useAuth } from "../hooks/useAuth";
-
 const UserManager = () => {
-
-  // retrieves token and user data from authContext
-  const {  token  } = useAuth();
-
-  const [users, setUsers] = useState([{}]);
+  const { token, user: currentUser } = useAuth();
+  const [projectMembers, setProjectMembers] = useState([]);
   const [inviteId, setInviteId] = useState('');
 
-
-  const [projectMembers, setProjectMembers] = useState([{}]);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                         Fetches destails for Company members
-  /////////////////////////////////////////////////////////////////////////////////////////////////
+  // Fetch members
   useEffect(() => {
-      if (token) {
-          fetchProjectMembers();
-      }
+    if (token) fetchProjectMembers();
   }, [token]);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                          Member Details
-  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   const fetchProjectMembers = async () => {
     try {
-        const members = await listCompanyMembers(token); // 🔑 use token from context
-        console.log(members.members);
+      const res = await listCompanyMembers(token);
+      let members = res?.members || [];
 
-        setProjectMembers(members.members)
+      // Optional: remove current user
+      if (currentUser?._id) members = members.filter(u => u._id !== currentUser._id);
 
-
+      setProjectMembers(members);
     } catch (err) {
-        console.error(err.message);
+      console.error(err.message);
     }
   };
 
-  useEffect(() => {
-
-    const array = [
-      { name: "Alice Johnson", role: "Admin" },
-      { name: "Bob Smith", role: "Developer" },
-      { name: "Charlie Brown", role: "Manager" },
-      { name: "Diana Prince", role: "Submitter" },
-      { name: "Ethan Clark", role: "Developer" },
-      { name: "Fiona Lee", role: "Submitter" },    
-    ];
-    setUsers(array)
-  },[])
-
-
-const getColor = (role) => {
-  switch (role) {
-    case "Admin":
-      return "bg-red-500 text-white font-semibold hover:bg-red-600";       // strong red
-    case "Manager":
-      return "bg-orange-400 text-white font-semibold hover:bg-orange-500"; // softer, warm orange
-    case "Developer":
-      return "bg-blue-500 text-white font-semibold hover:bg-blue-600";      // nice blue
-    case "Submitter":
-      return "bg-purple-500 text-white font-semibold hover:bg-purple-700"; // vibrant purple
-    default:
-      return "bg-gray-400 text-white font-semibold hover:bg-gray-600";      // neutral gray
-  }
-};
-
-  const row = (name, userRole, roleCategory, key) => {
-    
-    if(userRole == roleCategory)
-    return (
-      <div
-        onClick={() => handleClick(name)}
-        key={key}
-        className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
-      >
-        <p className="flex flex-wrap">{name}</p>
-      </div>
-    );
-  };
-
-  const handleClick = (title) => {
-    alert(`You clicked on: ${title}`);
-  };
-
-
-  const handleSubmit = (e) => {
+  // Handle adding a new member
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    addCompanyMember(inviteId,"Developer", token)
+    if (!inviteId) return;
+    await addCompanyMember(inviteId, "Developer", token);
+    setInviteId('');
+    fetchProjectMembers();
   };
+
+  // Button coloring like ProjectMember UserManager
+  const getColor = (index) => {
+    const colors = [
+      "bg-red-500 text-white hover:bg-red-600",
+      "bg-orange-400 text-white hover:bg-orange-500",
+      "bg-blue-500 text-white hover:bg-blue-600",
+      "bg-purple-500 text-white hover:bg-purple-700",
+      "bg-teal-500 text-white hover:bg-teal-600",
+      "bg-indigo-500 text-white hover:bg-indigo-600",
+      "bg-pink-500 text-white hover:bg-pink-600",
+    ];
+    return colors[index % colors.length];
+  };
+
   return (
-    <div>
+    <div className="p-6 bg-gray-100 min-h-screen space-y-6">
 
-
-      <div className='px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto min-w-130'>
-        <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Company Manager</h1>  
-
-        <form onSubmit={handleSubmit}>
-          <div className="flex flex-wrap gap-2 m-4">  
-
-            <p className="px-4 py-2">please enter invite Id</p>
-
-            <input 
-              type="text" 
-              className='border-1 w-65' 
-              value={inviteId} 
-              onChange={(e) => setInviteId(e.target.value)} 
-            placeholder="Type here..."
-            />
-
-            <button         
-            className={` px-4 py-2 bg-red-500 text-white font-semibold hover:bg-red-600 rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
-            >
-              <p className="flex flex-wrap">
-                Add User
-              </p>
-            </button>
-          </div>
+      {/* Add Member Section */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">Company Manager</h1>
+        <form onSubmit={handleSubmit} className="flex flex-wrap items-center gap-2 justify-center">
+          <input
+            type="text"
+            className="border rounded px-3 py-2 w-64"
+            placeholder="Enter invite ID..."
+            value={inviteId}
+            onChange={(e) => setInviteId(e.target.value)}
+          />
+          <button
+            type="submit"
+            className="px-4 py-2 bg-blue-400 text-white rounded hover:bg-blue-500 transition"
+          >
+            Add User
+          </button>
         </form>
       </div>
 
-      <div className='mt-5 px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto min-w-130'>
-        <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Users</h1>  
-        <div className='grid grid-rows-4 '>
-            
-            <div>
-              <p className='m-auto h-auto font-bold'>Admin</p>
-              <div className="flex flex-wrap gap-2">
-                {projectMembers.map((user, index) =>
-                row(user.name, user.role, "Admin", index)
-                )}
+      {/* Members List */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h1 className="text-3xl font-bold text-gray-800 mb-4 text-center">Company Members</h1>
+        <div className="flex flex-wrap gap-3 justify-center">
+          {projectMembers.length > 0 ? (
+            projectMembers.map((user, index) => (
+              <div
+                key={user._id || index}
+                className={`px-4 py-2 rounded-lg shadow hover:shadow-md transition cursor-pointer ${getColor(index)}`}
+              >
+                {user.name}
               </div>
-            </div>
-
-            <div>
-              <p className='m-auto h-auto font-bold'>Project Manager</p>
-              <div className="flex flex-wrap gap-2">
-                {projectMembers.map((user, index) =>
-                row(user.name, user.role, "Manager", index)
-                )}
-              </div>
-            </div>
-
-            <div>
-              <p className='m-auto h-auto font-bold'>Developer</p> 
-              <div className="flex flex-wrap gap-2">
-                {projectMembers.map((user, index) =>
-                row(user.name, user.role, "Developer", index)
-                )}
-              </div>   
-            </div>
-
-            <div>
-              <p className='m-auto h-auto font-bold'>Submitter</p>
-              <div className="flex flex-wrap gap-2">
-                {projectMembers.map((user, index) =>
-                row(user.name, user.role, "Submitter", index)
-                )}
-              </div>
-            </div>
-
+            ))
+          ) : (
+            <p className="text-gray-500 text-center w-full">No members found.</p>
+          )}
         </div>
-        
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default UserManager
+export default UserManager;
