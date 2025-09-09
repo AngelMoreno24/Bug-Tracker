@@ -6,8 +6,8 @@ import {
   Tooltip,
   Legend,
   ResponsiveContainer,
-  LineChart,
-  Line,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -33,13 +33,12 @@ const Dashboard = () => {
 
   const COLORS = ["#ef4444", "#f59e0b", "#4b5563"]; // red, yellow, gray
 
-  // Line chart data: tickets created over time
-  const ticketsOverTime = [
-    { week: "Week 1", tickets: 5 },
-    { week: "Week 2", tickets: 8 },
-    { week: "Week 3", tickets: 12 },
-    { week: "Week 4", tickets: 7 },
-    { week: "Week 5", tickets: 10 },
+  // Bar chart data: tickets by priority
+  const ticketsByPriority = [
+    { priority: "Critical", count: 3 },
+    { priority: "High", count: 12 },
+    { priority: "Medium", count: 15 },
+    { priority: "Low", count: 12 },
   ];
 
   // Recent tickets table (dummy data)
@@ -126,23 +125,18 @@ const Dashboard = () => {
           </ResponsiveContainer>
         </div>
 
-        {/* Line Chart */}
+        {/* Bar Chart */}
         <div className="bg-white rounded-2xl shadow p-6">
-          <h2 className="text-xl font-semibold mb-4">Tickets Over Time</h2>
+          <h2 className="text-xl font-semibold mb-4">Tickets by Priority</h2>
           <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={ticketsOverTime}>
+            <BarChart data={ticketsByPriority}>
               <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="week" />
+              <XAxis dataKey="priority" />
               <YAxis />
               <Tooltip />
               <Legend />
-              <Line
-                type="monotone"
-                dataKey="tickets"
-                stroke="#2563eb"
-                strokeWidth={3}
-              />
-            </LineChart>
+              <Bar dataKey="count" fill="#2563eb" />
+            </BarChart>
           </ResponsiveContainer>
         </div>
       </div>
