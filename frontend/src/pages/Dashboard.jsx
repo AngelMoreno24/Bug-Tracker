@@ -16,12 +16,12 @@ import {
 const Dashboard = () => {
   // Dummy data — replace with API later
   const stats = {
-    projects: 5,
-    activeProjects: 3,
-    tickets: 42,
-    openTickets: 18,
-    closedTickets: 20,
-    inProgressTickets: 4,
+  projects: 5,
+  tickets: 42,
+  openTickets: 18,
+  closedTickets: 20,
+  inProgressTickets: 4,
+  unassignedTickets: 6,
   };
 
   // Pie chart data: ticket status breakdown
@@ -31,7 +31,7 @@ const Dashboard = () => {
     { name: "Closed", value: stats.closedTickets },
   ];
 
-  const COLORS = ["#ef4444", "#f59e0b", "#4b5563"]; // red, yellow, gray
+  const STATUS_COLORS = ["#ef4444", "#f59e0b", "#4b5563"]; // red, yellow, gray
 
   // Bar chart data: tickets by priority
   const ticketsByPriority = [
@@ -41,14 +41,12 @@ const Dashboard = () => {
     { priority: "Low", count: 12 },
   ];
 
-  // Recent tickets table (dummy data)
-  const recentTickets = [
-    { id: 1, title: "Login Bug", status: "Open", assignee: "Alice" },
-    { id: 2, title: "UI Overlap", status: "In Progress", assignee: "Bob" },
-    { id: 3, title: "API Timeout", status: "Closed", assignee: "Charlie" },
-    { id: 4, title: "Dashboard Styling", status: "Open", assignee: "Diana" },
-    { id: 5, title: "Notification Error", status: "Closed", assignee: "Eve" },
-  ];
+  const PRIORITY_COLORS = {
+    Critical: "#000000",
+    High: "#ef4444",
+    Medium: "#facc15",
+    Low: "#22c55e",
+  };
 
   return (
     <div className="p-8 bg-gray-100 min-h-screen">
@@ -60,12 +58,15 @@ const Dashboard = () => {
           <p className="text-gray-600 text-lg font-medium">Total Projects</p>
           <p className="text-4xl font-bold text-blue-500">{stats.projects}</p>
         </div>
+
+        {/* 🔄 Swapped out Active Projects for Unassigned Tickets */}
         <div className="bg-white rounded-2xl shadow p-6 text-center">
-          <p className="text-gray-600 text-lg font-medium">Active Projects</p>
-          <p className="text-4xl font-bold text-green-500">
-            {stats.activeProjects}
+          <p className="text-gray-600 text-lg font-medium">Unassigned Tickets</p>
+          <p className="text-4xl font-bold text-orange-500">
+            {stats.unassignedTickets}
           </p>
         </div>
+
         <div className="bg-white rounded-2xl shadow p-6 text-center">
           <p className="text-gray-600 text-lg font-medium">Total Tickets</p>
           <p className="text-4xl font-bold text-indigo-500">{stats.tickets}</p>
@@ -95,7 +96,7 @@ const Dashboard = () => {
       </div>
 
       {/* Charts Section */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-10">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Pie Chart */}
         <div className="bg-white rounded-2xl shadow p-6">
           <h2 className="text-xl font-semibold mb-4">Tickets by Status</h2>
@@ -115,7 +116,7 @@ const Dashboard = () => {
                 {ticketStatusData.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
-                    fill={COLORS[index % COLORS.length]}
+                    fill={STATUS_COLORS[index % STATUS_COLORS.length]}
                   />
                 ))}
               </Pie>
@@ -135,33 +136,17 @@ const Dashboard = () => {
               <YAxis />
               <Tooltip />
               <Legend />
-              <Bar dataKey="count" fill="#2563eb" />
+              <Bar dataKey="count" barSize={40}>
+                {ticketsByPriority.map((entry, index) => (
+                  <Cell
+                    key={`cell-${index}`}
+                    fill={PRIORITY_COLORS[entry.priority]}
+                  />
+                ))}
+              </Bar>
             </BarChart>
           </ResponsiveContainer>
         </div>
-      </div>
-
-      {/* Recent Tickets Table */}
-      <div className="bg-white rounded-2xl shadow p-6">
-        <h2 className="text-xl font-semibold mb-4">Recent Tickets</h2>
-        <table className="min-w-full border border-gray-200">
-          <thead className="bg-gray-50">
-            <tr>
-              <th className="py-2 px-4 border-b text-left">Title</th>
-              <th className="py-2 px-4 border-b text-left">Status</th>
-              <th className="py-2 px-4 border-b text-left">Assignee</th>
-            </tr>
-          </thead>
-          <tbody>
-            {recentTickets.map((ticket) => (
-              <tr key={ticket.id} className="hover:bg-gray-50">
-                <td className="py-2 px-4 border-b">{ticket.title}</td>
-                <td className="py-2 px-4 border-b">{ticket.status}</td>
-                <td className="py-2 px-4 border-b">{ticket.assignee}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );
