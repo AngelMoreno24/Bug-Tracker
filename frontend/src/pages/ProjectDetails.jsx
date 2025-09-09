@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom';
-import Modal from "../components/Modal"; 
+import Modal from "../components/Modal";
 import AddTicketForm from "../components/forms/AddTicketForm";
 import { getProjectMembers } from '../api/ProjectMemberAPI';
 import { getTickets, createTicket } from '../api/TicketAPI';
@@ -31,8 +31,8 @@ const ProjectDetails = () => {
         try {
             const projects = await getProjectById(id, token);
             const projectInfo = projects.project;
-            setProjectTitle(projectInfo.name)
-            setProjectDescription(projectInfo.description)
+            setProjectTitle(projectInfo.name);
+            setProjectDescription(projectInfo.description);
         } catch (err) {
             console.error(err.message);
         }
@@ -41,7 +41,7 @@ const ProjectDetails = () => {
     const fetchProjectMembers = async () => {
         try {
             const members = await getProjectMembers(id, token);
-            setProjectMembers(members)
+            setProjectMembers(members);
         } catch (err) {
             console.error(err.message);
         }
@@ -50,15 +50,15 @@ const ProjectDetails = () => {
     const fetchProjectTickets = async () => {
         try {
             const tickets = await getTickets(id, token);
-            setTickets(tickets)
+            setTickets(tickets);
         } catch (err) {
             console.error(err.message);
         }
     };
 
     const handleAddTicket = async () => {
-        await createTicket(ticketForm, token)
-        await fetchProjectTickets()
+        await createTicket(ticketForm, token);
+        await fetchProjectTickets();
         setTicketForm({ title: "", description: "", type: "bug", priority: "low" });
         setAddTicketOpen(false);
     };
@@ -73,16 +73,23 @@ const ProjectDetails = () => {
         }
     };
 
-    const row = (name, userRole, roleCategory, key) => {
-        if (userRole === roleCategory)
-            return (
-                <div
-                    key={key}
-                    className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
-                >
-                    <p className="text-center">{name}</p>
+
+    const memberRow = (user, roleCategory, key) => {
+        if (user.role !== roleCategory) return null;
+
+        return (
+            <div
+                key={key}
+                className={`relative group px-4 py-2 ${getColor(user.role)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg flex items-center gap-2`}
+            >
+                <p className="font-medium">{user.name}</p>
+
+                {/* Tooltip */}
+                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none bg-gray-800 text-white text-sm px-3 py-1 rounded shadow-lg whitespace-nowrap z-50">
+                    Role: {user.role}{user.email ? ` | Email: ${user.email}` : ''}
                 </div>
-            );
+            </div>
+        );
     };
 
     const getTypeColor = (type) => {
@@ -146,7 +153,7 @@ const ProjectDetails = () => {
                             <h3 className="font-semibold mb-2">{role}</h3>
                             <div className="flex flex-wrap gap-2">
                                 {projectMembers.map((user, index) =>
-                                    row(user.name, user.role, role, index)
+                                    memberRow(user, role, index)
                                 )}
                             </div>
                         </div>
@@ -199,4 +206,4 @@ const ProjectDetails = () => {
     )
 }
 
-export default ProjectDetails
+export default ProjectDetails;
