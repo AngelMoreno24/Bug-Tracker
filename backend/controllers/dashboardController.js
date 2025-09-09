@@ -26,17 +26,28 @@ export const getDashboardStats = async (req, res) => {
     const closedTickets = await Ticket.countDocuments({ projectId: { $in: projectIds }, status: "closed" });
 
 
+    const criticalTickets = await Ticket.countDocuments({ projectId: { $in: projectIds }, priority: "critical" });
+    const highTickets = await Ticket.countDocuments({ projectId: { $in: projectIds }, priority: "high" });
+    const mediumTickets = await Ticket.countDocuments({ projectId: { $in: projectIds }, priority: "medium" });
+    const lowTickets = await Ticket.countDocuments({ projectId: { $in: projectIds }, priority: "low" });
+
+ 
+
     // Example of another metric
     const unassignedTickets = await Ticket.countDocuments({ assignedTo: null });
 
     // Combine into one response
     res.json({
-      projects: totalProjects,
-      tickets: totalTickets,
-      openTickets,
-      inProgressTickets,
-      closedTickets,
-      unassignedTickets,
+        projects: totalProjects,
+        tickets: totalTickets,
+        openTickets,
+        inProgressTickets,
+        closedTickets,
+        unassignedTickets,
+        criticalTickets,
+        highTickets,
+        mediumTickets,
+        lowTickets
     });
   } catch (err) {
     console.error("Error fetching dashboard stats:", err.message);
