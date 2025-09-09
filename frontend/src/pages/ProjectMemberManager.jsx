@@ -1,306 +1,212 @@
-import React, {useState, useEffect} from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+import React, { useState, useEffect, useMemo } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from "../hooks/useAuth"; 
-import { listCompanyMembers } from '../api/CompanyMemberAPI';
-import { getPossibleProjectMembers, getProjectMembers, addProjectMember, editProjectMember } from '../api/ProjectMemberAPI'
+import { getPossibleProjectMembers, getProjectMembers, addProjectMember, editProjectMember } from '../api/ProjectMemberAPI';
 import AddProjectMemberForm from "../components/forms/AddProjectMemberForm";
-import EditProjectMemberForm from "../components/forms/EditProjectMemberForm"
+import EditProjectMemberForm from "../components/forms/EditProjectMemberForm";
+import Modal from "../components/Modal";
 
-import Modal from "../components/Modal"; // adjust the path as needed
 const UserManager = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const { token } = useAuth();
 
   const [users, setUsers] = useState([]);
-  const [inviteId, setInviteId] = useState('');
+  const [unassignedProjectMembers, setUnassignedProjectMembers] = useState([]);
+
   const [filter, setFilter] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
-  const { id } = useParams();  // <-- grabs "id" from the URL
+  const [addProjectMemberOpen, setAddProjectMemberOpen] = useState(false);
+  const [editProjectMemberOpen, setEditProjectMemberOpen] = useState(false);
 
+  const [projectMemberForm, setProjectMemberForm] = useState({});
+  const [editProjectMemberForm, setEditProjectMemberForm] = useState({});
 
-  // retrieves token and user data from authContext
-  const {  token  } = useAuth();
-
-
-  const [projectMembers, setProjectMembers] = useState([]);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                         Fetches destails for Company members
-  /////////////////////////////////////////////////////////////////////////////////////////////////
   useEffect(() => {
-      if (token) {
-          fetchProjectMembers();
-          fetchPossibleProjectMembers();
-      }
+    if (token) {
+      fetchProjectMembers();
+      fetchPossibleProjectMembers();
+    }
   }, [token]);
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                         Assiged Member Details
-  /////////////////////////////////////////////////////////////////////////////////////////////////
 
   const fetchProjectMembers = async () => {
     try {
-        const members = await getProjectMembers(id, token); // 🔑 use token from context
-
-        console.log(members)
-        setUsers(members)
-
-
+      const members = await getProjectMembers(id, token);
+      setUsers(members);
     } catch (err) {
-        console.error(err.message);
+      console.error(err.message);
     }
   };
 
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                        Unassigned Member Details
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-  const [unassignedProjectMembers, setUnassignedProjectMembers] = useState([]);
-  
   const fetchPossibleProjectMembers = async () => {
     try {
-        const members = await getPossibleProjectMembers(id, token); // 🔑 use token from context
-        console.log(members);
-        console.log(members);
-        console.log(members);
-        setUnassignedProjectMembers(members)
-
-
+      const members = await getPossibleProjectMembers(id, token);
+      setUnassignedProjectMembers(members);
     } catch (err) {
-        console.error(err.message);
+      console.error(err.message);
     }
   };
 
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                          Assign Role Modal
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-  const [addProjectMemberOpen, setAddProjectMemberOpen] = useState(false);
-  const [projectMemberForm, setProjectMemberForm] = useState();
-
-  const handleAddProjectMember = async (name, key) =>{
-
-    console.log(projectMemberForm)
-
-    
-    await addProjectMember(id, projectMemberForm.id, projectMemberForm.role, token)
+  const handleAddProjectMember = async () => {
+    await addProjectMember(id, projectMemberForm.id, projectMemberForm.role, token);
     fetchProjectMembers();
     fetchPossibleProjectMembers();
-
     setProjectMemberForm({ name: "", role: "" });
     setAddProjectMemberOpen(false);
-  }
+  };
 
-  
+  const handleEditProjectMember = async () => {
+    await editProjectMember(editProjectMemberForm.id, editProjectMemberForm.role, token);
+    fetchProjectMembers();
+    fetchPossibleProjectMembers();
+    setEditProjectMemberForm({ name: "", role: "" });
+    setEditProjectMemberOpen(false);
+  };
 
-  const unassignedRow = (name, userRole, roleCategory, key, id) => {
-    
+  const getColor = (role) => {
+    switch (role) {
+      case "Admin": return "bg-red-500 text-white hover:bg-red-600";
+      case "Manager": return "bg-orange-400 text-white hover:bg-orange-500";
+      case "Developer": return "bg-blue-500 text-white hover:bg-blue-600";
+      case "Submitter": return "bg-purple-500 text-white hover:bg-purple-700";
+      default: return "bg-gray-400 text-white hover:bg-gray-600";
+    }
+  };
 
-
-    console.log(id)
+  const badgeRow = (user, roleCategory, clickHandler) => {
+    if (roleCategory && user.role !== roleCategory) return null;
     return (
       <div
-        onClick={() => {
-          setAddProjectMemberOpen(true)
-          setProjectMemberForm({name: name, role: "Developer", id:id} )
-      }}
-        key={key}
-        className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
+        key={user.id}
+        onClick={clickHandler}
+        className={`px-4 py-2 ${getColor(user.role)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md relative`}
       >
-        <p className="flex flex-wrap">{name}</p>
+        {user.name}
+        {/* Tooltip */}
+        <span className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 text-sm rounded bg-black text-white opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+          {user.role} - {user.email || "No email"}
+        </span>
       </div>
     );
   };
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                    edit assigned users
-  /////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-  const [editProjectMemberOpen, setEditProjectMemberOpen] = useState(false);
-  const [editProjectMemberForm, setEditProjectMemberForm] = useState();
-
-  const handleEditProjectMember = async (name, key) =>{
-
-    console.log(editProjectMemberForm)
-
-    
-    await editProjectMember(editProjectMemberForm.id, editProjectMemberForm.role, token)
-
-    fetchProjectMembers();
-    fetchPossibleProjectMembers();
-
-    setEditProjectMemberForm({ name: "", role: "" });
-    setEditProjectMemberOpen(false);
-  }
-
-
-
-  const row = (name, userRole, roleCategory, key, memberId, userId) => {
-    if (userRole == roleCategory || roleCategory == "")
-      return (
-        <div
-          onClick={() => {
-            setEditProjectMemberOpen(true);
-            setEditProjectMemberForm({
-              name: name,
-              role: userRole || "",   // ✅ fallback to empty (placeholder)
-              id: memberId,
-              userId: userId
-            });
-          }}
-          key={key}
-          className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
-        >
-          <p className="flex flex-wrap">{name}</p>
-        </div>
+  // Filter and search users
+  const filteredUnassigned = useMemo(() => {
+    return unassignedProjectMembers
+      .filter(u => 
+        u.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (filter === "" || u.name.toUpperCase().startsWith(filter))
       );
-  };
+  }, [unassignedProjectMembers, searchTerm, filter]);
 
-
-
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-  //                                    Set Color Based On User Role
-  /////////////////////////////////////////////////////////////////////////////////////////////////
-
-const getColor = (role) => {
-  switch (role) {
-    case "Admin":
-      return "bg-red-500 text-white font-semibold hover:bg-red-600";       // strong red
-    case "Manager":
-      return "bg-orange-400 text-white font-semibold hover:bg-orange-500"; // softer, warm orange
-    case "Developer":
-      return "bg-blue-500 text-white font-semibold hover:bg-blue-600";      // nice blue
-    case "Submitter":
-      return "bg-purple-500 text-white font-semibold hover:bg-purple-700"; // vibrant purple
-    default:
-      return "bg-gray-400 text-white font-semibold hover:bg-gray-600";      // neutral gray
-  }
-};
-
-
-
-
-  const handleFilter = async (e) => {
-    e.preventDefault();
-    await setFilter(e.target.value);
-  };
+  const filteredAssigned = useMemo(() => {
+    return users
+      .filter(u => 
+        u.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+        (filter === "" || u.name.toUpperCase().startsWith(filter))
+      );
+  }, [users, searchTerm, filter]);
 
   return (
-    <div>
+    <div className="p-6 bg-gray-100 min-h-screen space-y-6">
 
+      {/* Filters */}
+      <div className="flex flex-wrap gap-4 items-center">
+        <input
+          type="text"
+          placeholder="Search users..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+          className="border rounded px-3 py-2 w-64 shadow-sm"
+        />
+        <select
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          className="border rounded px-3 py-2 bg-white shadow"
+        >
+          <option value="">All</option>
+          {Array.from({ length: 26 }, (_, i) => {
+            const letter = String.fromCharCode(65 + i);
+            return <option key={letter} value={letter}>{letter}</option>;
+          })}
+        </select>
+      </div>
 
-        <div className='mt-5 px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto min-w-130'>
-            
-
-            <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Unassigned Users</h1>  
-            
-            <div>
-            <input type="text" className='border-1 mt-5 mb-5 py-1 p-1' />
-            <select
-                value={filter}
-                onChange={handleFilter}
-                className="border rounded px-3 py-1 ml-4 bg-white shadow"
-            >
-                <option value="">All</option>
-                {Array.from({ length: 26 }, (_, i) => {
-                const letter = String.fromCharCode(65 + i); // A-Z
-                return (
-                    <option key={letter} value={letter}>
-                    {letter}
-                    </option>
-                );
-                })}
-            </select>
-                
-            </div>
-
-            {
-
-            /////////////////////////////////////////////////////////////////////////////////////////////////
-            //                                          List Unassigned Users
-            /////////////////////////////////////////////////////////////////////////////////////////////////
-
-            }
-            <div className='grid grid-rows-4 '>
-                
-                <div>
-                    <div className="flex flex-wrap gap-2">
-                        {unassignedProjectMembers.map((user, index) =>
-                        unassignedRow(user.name, user.role, "", index, user.id)
-                        )}
-                    </div>
-                </div>
-
-            </div>
-            
+      {/* Unassigned Users */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Unassigned Users</h2>
+        <div className="flex flex-wrap gap-2">
+          {filteredUnassigned.map(user =>
+            badgeRow(user, "", () => {
+              setAddProjectMemberOpen(true);
+              setProjectMemberForm({ name: user.name, role: "Developer", id: user.id });
+            })
+          )}
+          {filteredUnassigned.length === 0 && (
+            <p className="text-gray-500">No users found.</p>
+          )}
         </div>
+      </div>
 
-        <div className='mt-5 px-4 h-96 py-2 bg-white  rounded grid-rows-2  shadow-gray-900 h-auto min-w-130'>
-            <h1 className='self-center text-center font-bold text-3xl pt-5 pb-5 border-b-3'>Assigned Users</h1>  
-            <div className='grid grid-rows-4 '>
-                
-                <div>
-                <p className='m-auto h-auto font-bold'>Admin</p>
-                <div className="flex flex-wrap gap-2">
-                    {users.map((user, index) =>
-                    row(user.name, user.role, "Admin", index, user.memberId, user.id )
-                    )}
-                </div>
-                </div>
-
-                <div>
-                <p className='m-auto h-auto font-bold'>Project Manager</p>
-                <div className="flex flex-wrap gap-2">
-                    {users.map((user, index) =>
-                    row(user.name, user.role, "Manager", index, user.memberId, user.id )
-                    )}
-                </div>
-                </div>
-
-                <div>
-                <p className='m-auto h-auto font-bold'>Developer</p> 
-                <div className="flex flex-wrap gap-2">
-                    {users.map((user, index) =>
-                    row(user.name, user.role, "Developer", index, user.memberId, user.id )
-                    )}
-                </div>   
-                </div>
-
-                <div>
-                <p className='m-auto h-auto font-bold'>Submitter</p>
-                <div className="flex flex-wrap gap-2">
-                    {users.map((user, index) =>
-                    row(user.name, user.role, "Submitter", index, user.memberId, user.id )
-                    )}
-                </div>
-                </div>
-
+      {/* Assigned Users */}
+      <div className="bg-white rounded-lg shadow p-6">
+        <h2 className="text-2xl font-bold text-gray-800 mb-4 text-center">Assigned Users</h2>
+        {["Admin", "Manager", "Developer", "Submitter"].map(role => (
+          <div key={role} className="mb-4">
+            <h3 className="font-semibold mb-2">{role}</h3>
+            <div className="flex flex-wrap gap-2">
+              {filteredAssigned.map(user =>
+                badgeRow(user, role, () => {
+                  setEditProjectMemberOpen(true);
+                  setEditProjectMemberForm({
+                    name: user.name,
+                    role: user.role,
+                    id: user.memberId,
+                    userId: user.id
+                  });
+                })
+              )}
             </div>
-            
-        </div>
-        
+          </div>
+        ))}
+      </div>
+
+      {/* Add Project Member Modal */}
       {addProjectMemberOpen && (
-        <Modal title={projectMemberForm.name} onClose={() => setAddProjectMemberOpen(false)} onSave={handleAddProjectMember}>
-          <AddProjectMemberForm projectMemberForm={projectMemberForm} setProjectMemberForm={setProjectMemberForm} />
-        </Modal>
-      )}
-
-      {editProjectMemberOpen && (
-        <Modal title={editProjectMemberForm.name} onClose={() => setEditProjectMemberOpen(false)} onSave={handleEditProjectMember}>
-          <EditProjectMemberForm editProjectMemberForm={editProjectMemberForm} setEditProjectMemberForm={setEditProjectMemberForm} 
-          
-            onDelete={async () => {
-              setEditProjectMemberOpen(false); // close modal
-              await fetchProjectMembers();
-              await fetchPossibleProjectMembers();
-            }}
-
+        <Modal
+          title={`Add ${projectMemberForm.name}`}
+          onClose={() => setAddProjectMemberOpen(false)}
+          onSave={handleAddProjectMember}
+        >
+          <AddProjectMemberForm
+            projectMemberForm={projectMemberForm}
+            setProjectMemberForm={setProjectMemberForm}
           />
         </Modal>
       )}
-    </div>
-  )
-}
 
-export default UserManager
+      {/* Edit Project Member Modal */}
+      {editProjectMemberOpen && (
+        <Modal
+          title={`Edit ${editProjectMemberForm.name}`}
+          onClose={() => setEditProjectMemberOpen(false)}
+          onSave={handleEditProjectMember}
+        >
+          <EditProjectMemberForm
+            editProjectMemberForm={editProjectMemberForm}
+            setEditProjectMemberForm={setEditProjectMemberForm}
+            onDelete={async () => {
+              setEditProjectMemberOpen(false);
+              await fetchProjectMembers();
+              await fetchPossibleProjectMembers();
+            }}
+          />
+        </Modal>
+      )}
+
+    </div>
+  );
+};
+
+export default UserManager;
