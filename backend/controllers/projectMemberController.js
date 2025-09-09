@@ -66,6 +66,7 @@ export const getProjectMembers = async (req, res) => {
 
     // Map into a clean array
     const formattedMembers = members.map((member) => ({
+      memberId: member._id,
       id: member.userId._id,
       name: member.userId.name,
       role: member.role,
@@ -135,10 +136,16 @@ export const getPossibleProjectMembers = async (req, res) => {
 export const editProjectMembers = async (req, res) => {
   try {
     const { memberId } = req.params;
-    const updates = req.body;
+    const role = req.body;
 
+    const checkRole = await ProjectMember.findById(memberId)
+
+    //stops you from changes admin member's roles
+    if(checkRole.role.includes("Admin")){
+      return res.json({ message: "not allowed to edit admins"})
+    }
     
-    const member = await ProjectMember.findByIdAndUpdate(memberId, updates, { new: true })
+    const member = await ProjectMember.findByIdAndUpdate(memberId, role, { new: true })
 
     if (!member) return res.status(404).json({ message: "Member not found" });
 

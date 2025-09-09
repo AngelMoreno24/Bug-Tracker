@@ -2,7 +2,7 @@ import React, {useState, useEffect} from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { useAuth } from "../hooks/useAuth"; 
 import { listCompanyMembers } from '../api/CompanyMemberAPI';
-import { getPossibleProjectMembers, getProjectMembers, addProjectMember } from '../api/ProjectMemberAPI'
+import { getPossibleProjectMembers, getProjectMembers, addProjectMember, editProjectMember } from '../api/ProjectMemberAPI'
 import AddProjectMemberForm from "../components/forms/AddProjectMemberForm";
 import EditProjectMemberForm from "../components/forms/EditProjectMemberForm"
 
@@ -41,6 +41,7 @@ const UserManager = () => {
     try {
         const members = await getProjectMembers(id, token); // 🔑 use token from context
 
+        console.log(members)
         setUsers(members)
 
 
@@ -84,9 +85,8 @@ const UserManager = () => {
 
     
     await addProjectMember(id, projectMemberForm.id, projectMemberForm.role, token)
-    //await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
-    //await fetchProjects() 
-
+    fetchProjectMembers();
+    fetchPossibleProjectMembers();
 
     setProjectMemberForm({ name: "", role: "" });
     setAddProjectMemberOpen(false);
@@ -125,32 +125,36 @@ const UserManager = () => {
     console.log(editProjectMemberForm)
 
     
-    //await addProjectMember(id, projectMemberForm.id, projectMemberForm.role, token)
-    //await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
-    //await fetchProjects() 
+    await editProjectMember(editProjectMemberForm.id, editProjectMemberForm.role, token)
 
+    fetchProjectMembers();
+    fetchPossibleProjectMembers();
 
     setEditProjectMemberForm({ name: "", role: "" });
     setEditProjectMemberOpen(false);
   }
-const row = (name, userRole, roleCategory, key) => {
-  if (userRole == roleCategory || roleCategory == "")
-    return (
-      <div
-        onClick={() => {
-          setEditProjectMemberOpen(true);
-          setEditProjectMemberForm({
-            name: name,
-            role: userRole || ""   // ✅ fallback to empty (placeholder)
-          });
-        }}
-        key={key}
-        className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
-      >
-        <p className="flex flex-wrap">{name}</p>
-      </div>
-    );
-};
+
+
+
+  const row = (name, userRole, roleCategory, key, memberId) => {
+    if (userRole == roleCategory || roleCategory == "")
+      return (
+        <div
+          onClick={() => {
+            setEditProjectMemberOpen(true);
+            setEditProjectMemberForm({
+              name: name,
+              role: userRole || "",   // ✅ fallback to empty (placeholder)
+              id:memberId
+            });
+          }}
+          key={key}
+          className={`px-4 py-2 ${getColor(userRole)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-md`}
+        >
+          <p className="flex flex-wrap">{name}</p>
+        </div>
+      );
+  };
 
 
 
@@ -239,7 +243,7 @@ const getColor = (role) => {
                 <p className='m-auto h-auto font-bold'>Admin</p>
                 <div className="flex flex-wrap gap-2">
                     {users.map((user, index) =>
-                    row(user.name, user.role, "Admin", index)
+                    row(user.name, user.role, "Admin", index, user.memberId)
                     )}
                 </div>
                 </div>
@@ -248,7 +252,7 @@ const getColor = (role) => {
                 <p className='m-auto h-auto font-bold'>Project Manager</p>
                 <div className="flex flex-wrap gap-2">
                     {users.map((user, index) =>
-                    row(user.name, user.role, "Manager", index)
+                    row(user.name, user.role, "Manager", index, user.memberId)
                     )}
                 </div>
                 </div>
@@ -257,7 +261,7 @@ const getColor = (role) => {
                 <p className='m-auto h-auto font-bold'>Developer</p> 
                 <div className="flex flex-wrap gap-2">
                     {users.map((user, index) =>
-                    row(user.name, user.role, "Developer", index)
+                    row(user.name, user.role, "Developer", index, user.memberId)
                     )}
                 </div>   
                 </div>
@@ -266,7 +270,7 @@ const getColor = (role) => {
                 <p className='m-auto h-auto font-bold'>Submitter</p>
                 <div className="flex flex-wrap gap-2">
                     {users.map((user, index) =>
-                    row(user.name, user.role, "Submitter", index)
+                    row(user.name, user.role, "Submitter", index, user.memberId)
                     )}
                 </div>
                 </div>
