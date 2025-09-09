@@ -59,7 +59,7 @@ const ProjectDetails = () => {
     const handleAddTicket = async () => {
         await createTicket(ticketForm, token);
         await fetchProjectTickets();
-        setTicketForm({ title: "", description: "", type: "bug", priority: "low" });
+        setTicketForm({ title: "", description: "", type: "bug", priority: "low", projectId: id });
         setAddTicketOpen(false);
     };
 
@@ -72,7 +72,6 @@ const ProjectDetails = () => {
             default: return "bg-gray-400 text-white font-semibold hover:bg-gray-600";
         }
     };
-
 
     const memberRow = (user, roleCategory, key) => {
         if (user.role !== roleCategory) return null;
@@ -94,34 +93,47 @@ const ProjectDetails = () => {
 
     const getTypeColor = (type) => {
         switch (type) {
-            case "bug": return "bg-red-600";
-            case "feature": return "bg-green-600";
-            case "task": return "bg-blue-600";
-            default: return "bg-gray-600";
+            case "bug": return "bg-red-500 text-white";
+            case "feature": return "bg-green-500 text-white";
+            case "task": return "bg-blue-500 text-white";
+            default: return "bg-gray-400 text-white";
         }
     };
 
     const getPriorityColor = (priority) => {
         switch (priority) {
-            case "critical": return "bg-black";
-            case "high": return "bg-red-600";
-            case "medium": return "bg-yellow-500";
-            case "low": return "bg-green-600";
-            default: return "bg-gray-600";
+            case "critical": return "bg-red-700 text-white";
+            case "high": return "bg-red-500 text-white";
+            case "medium": return "bg-yellow-400 text-black";
+            case "low": return "bg-green-500 text-white";
+            default: return "bg-gray-400 text-white";
         }
     };
 
-    const ticketRow = (title, type, priority, submitter, key, id) => {
+    const formatDate = (dateStr) => {
+        if (!dateStr) return "-";
+        const date = new Date(dateStr);
+        return date.toLocaleDateString() + " " + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    };
+
+    const ticketRow = (ticket, key) => {
+        const { title, type, priority, assignedTo, createdAt, updatedAt, _id } = ticket;
+
         return (
             <div
                 key={key}
-                onClick={() => navigate(`/accounts/projects/ticket/${id}`)}
-                className='grid grid-cols-4 px-4 py-3 bg-white border-b hover:bg-blue-50 cursor-pointer transition'
+                onClick={() => navigate(`/accounts/projects/ticket/${_id}`)}
+                className='relative group grid grid-cols-4 px-4 py-3 bg-white border-b hover:bg-gray-50 cursor-pointer transition'
             >
                 <p className='text-center self-center font-medium'>{title}</p>
-                <p className={`text-white text-center py-1 px-2 rounded w-24 m-auto ${getTypeColor(type)}`}>{type}</p>
-                <p className={`text-white text-center py-1 px-2 rounded w-24 m-auto ${getPriorityColor(priority)}`}>{priority}</p>
-                <p className='text-center self-center'>{submitter}</p>
+                <p className={`text-center py-1 px-2 rounded w-24 m-auto ${getTypeColor(type)}`}>{type}</p>
+                <p className={`text-center py-1 px-2 rounded w-24 m-auto ${getPriorityColor(priority)}`}>{priority}</p>
+                <p className='text-center self-center'>{assignedTo?.name || "-"}</p>
+
+                {/* Tooltip */}
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none bg-gray-800 text-white text-sm px-3 py-1 rounded shadow-lg whitespace-nowrap z-50">
+                    Type: {type} | Priority: {priority} | Developer: {assignedTo?.name || "-"} | Created: {formatDate(createdAt)} | Updated: {formatDate(updatedAt)}
+                </div>
             </div>
         );
     };
@@ -183,7 +195,7 @@ const ProjectDetails = () => {
                     {/* Tickets List */}
                     <div className='bg-white rounded-b'>
                         {tickets.map((ticket, index) =>
-                            ticketRow(ticket.title, ticket.type, ticket.priority, ticket.assignedTo.name, index, ticket._id)
+                            ticketRow(ticket, index)
                         )}
                     </div>
                 </div>
