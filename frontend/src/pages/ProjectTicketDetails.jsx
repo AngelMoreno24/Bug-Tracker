@@ -49,7 +49,7 @@ const ProjectTicketDetails = () => {
 
       const info = {
         createdBy: ticketDetails.createdBy.name,
-        assignedTo: ticketDetails.assignedTo.name,
+        assignedTo: ticketDetails.assignedTo? ticketDetails.assignedTo.name: "-",
         project: ticketDetails.projectId.name,
         priority: ticketDetails.priority,
         status: ticketDetails.status,
@@ -64,7 +64,7 @@ const ProjectTicketDetails = () => {
         id: ticketDetails.projectId._id,
         title: ticketDetails.title,
         description: ticketDetails.description,
-        assignedTo: ticketDetails.assignedTo.name,
+        assignedTo: ticketDetails.assignedTo? ticketDetails.assignedTo.name: "-",
         priority: ticketDetails.priority,
         status: ticketDetails.status,
         type: ticketDetails.type,
