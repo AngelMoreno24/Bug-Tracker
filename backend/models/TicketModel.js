@@ -37,9 +37,7 @@ const TicketSchema = new Schema({
   tags: [String],
   attachments: [String], // file URLs
 
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now }
-});
+}, { timestamps: true });
 
 const Ticket = mongoose.model('Ticket', TicketSchema);
 export default Ticket;
