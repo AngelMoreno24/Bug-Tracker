@@ -9,7 +9,7 @@ import { getProjectMembers } from "../../api/ProjectMemberAPI";
 const EditProjectMemberForm = ({ editProjectMemberForm, setEditProjectMemberForm }) => {
 
   const { user, token } = useAuth();
-  
+  console.log(editProjectMemberForm)
   return (
     <div>
       

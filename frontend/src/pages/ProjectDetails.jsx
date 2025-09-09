@@ -70,7 +70,7 @@ const ProjectDetails = () => {
             const members = await getProjectMembers(id ,token); // 🔑 use token from context
             console.log(members);
 
-            //setProjectMembers(members)
+            setProjectMembers(members)
 
 
         } catch (err) {
@@ -86,14 +86,6 @@ const ProjectDetails = () => {
     const fetchProjectTickets = async () => {
         try {
             const tickets = await getTickets(id ,token); // 🔑 use token from context
-            console.log(tickets);
-            console.log(tickets);
-            console.log(tickets);
-            console.log(tickets);
-            console.log(tickets);
-            console.log(tickets);
-            console.log(tickets);
-            console.log(tickets);
 
             setTickets(tickets)
 
