@@ -41,7 +41,10 @@ const ProjectTicketDetails = () => {
 
   const fetchTicketDetails = async () => {
     try {
+
+      
       const ticketDetails = await getTicketDetails(id, token);
+      setCommentForm({ ...commentForm, projectId: ticketDetails.projectId._id })
       setProjectId(ticketDetails.projectId._id);
       setProjectName(ticketDetails.projectId.name);
       setTitle(ticketDetails.title);
@@ -104,6 +107,7 @@ const ProjectTicketDetails = () => {
   };
 
   const handleAddComment = async () => {
+    console.log(commentForm)
     await createComment(commentForm, token);
     await fetchCommentDetails();
     setCommentForm({ ticketId: id, message: "" });

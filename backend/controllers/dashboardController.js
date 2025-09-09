@@ -12,10 +12,8 @@ export const getDashboardStats = async (req, res) => {
     const projects = await ProjectMember.find( {userId})
     .populate("projectId","_id")
 
-    console.log(projects)
-    // Project stats
-
     
+    // Project stats
     const totalProjects = projects.length
 
     const projectIds = projects.map((p) => p.projectId._id);
@@ -29,7 +27,7 @@ export const getDashboardStats = async (req, res) => {
 
 
     // Example of another metric
-    const unassignedTickets = await Ticket.countDocuments({ assignedTo: { $exists: false } });
+    const unassignedTickets = await Ticket.countDocuments({ assignedTo: null });
 
     // Combine into one response
     res.json({
