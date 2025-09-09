@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import Modal from "../components/Modal"; // adjust the path as needed
+import Modal from "../components/Modal"; 
 import AddProjectForm from "../components/forms/AddProjectForm";
 import { getProject, createProject } from '../api/ProjectAPI';
 import { useAuth } from "../hooks/useAuth"; 
 
 const Projects = () => {
   const navigate = useNavigate();
-
-  // ✅ now cleanly consuming context through useAuth
   const { user, token } = useAuth();  
 
   const [projects, setProjects] = useState([]);
@@ -16,8 +14,6 @@ const Projects = () => {
   const [projectForm, setProjectForm] = useState({ title: "", description: "", companyId: "" });
 
   const handleAddProject = async () => {
-
-    console.log(projectForm)
     await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
     await fetchProjects()
     setProjectForm({ title: "", description: "", companyId: "" });
@@ -26,21 +22,16 @@ const Projects = () => {
 
   const fetchProjects = async () => {
     try {
-      const projects = await getProject(token); // 🔑 use token from context
-      console.log(projects);
- 
-    if (projects && Array.isArray(projects)) {
-      const mappedProjects = projects.map((item) => ({
-        id: item.project._id,
-        title: item.project.name,
-        description: item.project.description,
-        role: item.role,
-      }));      
-      setProjects(mappedProjects); // ✅ update state with mapped output
-
-    }
- 
-
+      const projects = await getProject(token);
+      if (projects && Array.isArray(projects)) {
+        const mappedProjects = projects.map((item) => ({
+          id: item.project._id,
+          title: item.project.name,
+          description: item.project.description,
+          role: item.role,
+        }));      
+        setProjects(mappedProjects);
+      }
     } catch (err) {
       console.error(err.message);
     }
@@ -53,7 +44,7 @@ const Projects = () => {
   }, [token]);
 
   useEffect(() => {
-
+    // demo data for portfolio
     const projectsArray = [
       { id: 1, title: "Website", description: "Company website with marketing pages" },
       { id: 2, title: "Dashboard", description: "Internal analytics dashboard" },
@@ -68,19 +59,22 @@ const Projects = () => {
   const row = (title, description, id, index) => {
     return (
       <div 
-        className='grid grid-cols-4 px-4 py-2 bg-white hover:bg-gray-100'
+        className={`grid grid-cols-4 px-4 py-3 text-gray-700 ${
+          index % 2 === 0 ? "bg-gray-50" : "bg-white"
+        } hover:bg-blue-50 transition`}
       >
-        <p className='self-center text-center'>{title}</p>
-        <p className='self-center text-center'>{description}</p>
+        <p className='self-center text-center font-medium'>{title}</p>
+        <p className='self-center text-center text-sm text-gray-600'>{description}</p>
         <button 
           onClick={() => navigate(`/accounts/projects/${id}`)} 
-          className='bg-blue-500 hover:bg-blue-700 text-white rounded m-auto self-center text-center h-8 w-20'
+          className='bg-blue-500 hover:bg-blue-600 text-white rounded-md px-3 py-1 m-auto shadow-sm'
         >
           Details
         </button>
         <button 
           onClick={() => navigate(`/accounts/projects/${id}/members`)} 
-          className='bg-blue-500 hover:bg-blue-700 text-white rounded self-center text-center h-8 w-35'>
+          className='bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-3 py-1 m-auto shadow-sm'
+        >
           Manage Users
         </button>
       </div>
@@ -88,35 +82,35 @@ const Projects = () => {
   }
 
   return (
-    <div>
-      <h1>Projects</h1>  
+    <div className="p-6 bg-gray-100 min-h-screen">
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-800">Projects</h1>  
+        <button 
+          className='px-4 py-2 bg-amber-400 hover:bg-amber-500 text-white font-semibold rounded-lg shadow-md transition'
+          onClick={() => setAddProjectOpen(true)}
+        >
+          Create Project
+        </button>
+      </div>
 
-      <button 
-        className='px-4 py-2 bg-amber-300 hover:bg-amber-700 rounded transition mb-4 mt-4'
-        onClick={() => setAddProjectOpen(true)}
-      >
-        create Project
-      </button>
-
-      <div className='px-4 h-96 py-2 bg-white rounded grid-rows-2 shadow-gray-900 h-auto min-w-130'>
-        <div className='grid grid-rows-4'>
-          <div className='grid grid-cols-4 px-4 py-2 h-auto border-b-1'>
-            <p className='m-auto h-auto'>Project Name</p>
-            <p className='m-auto h-auto'>Project Description</p>
-          </div>
-          
-          {projects.map((project, index) => (
-            <React.Fragment key={project.id}>
-              {row(project.title, project.description, project.id, index)}
-            </React.Fragment>
-          ))}
+      <div className='bg-white rounded-lg shadow overflow-hidden'>
+        <div className='grid grid-cols-4 px-4 py-3 bg-gray-200 font-semibold text-gray-700'>
+          <p className='text-center'>Project Name</p>
+          <p className='text-center'>Project Description</p>
+          <p className='text-center col-span-2'>Actions</p>
         </div>
+        
+        {projects.map((project, index) => (
+          <React.Fragment key={project.id}>
+            {row(project.title, project.description, project.id, index)}
+          </React.Fragment>
+        ))}
       </div>
 
       {/* Modals */}
       {addProjectOpen && (
         <Modal 
-          title="Edit Ticket Details" 
+          title="Create Project" 
           onClose={() => setAddProjectOpen(false)} 
           onSave={handleAddProject}
         >
