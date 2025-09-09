@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {
   PieChart,
   Pie,
@@ -13,33 +13,48 @@ import {
   CartesianGrid,
 } from "recharts";
 
+import { useAuth } from "../hooks/useAuth";
+import { getDashboardStats } from "../api/DashboardAPI";
+
 const Dashboard = () => {
-  // Dummy data — replace with API later
-  const stats = {
-  projects: 5,
-  tickets: 42,
-  openTickets: 18,
-  closedTickets: 20,
-  inProgressTickets: 4,
-  unassignedTickets: 6,
+  const { token } = useAuth();
+
+  const [stats, setStats] = useState({});
+  const [ticketStatusData, setTicketStatusData] = useState([]);
+  const [ticketsByPriority, setTicketsByPriority] = useState([]);
+
+  useEffect(() => {
+    if (token) {
+      fetchDashboardData();
+    }
+  }, [token]);
+
+  const fetchDashboardData = async () => {
+    try {
+      const retrievedStats = await getDashboardStats(token);
+
+      setStats(retrievedStats);
+
+      // Pie chart data: ticket status breakdown
+      setTicketStatusData([
+        { name: "Open", value: retrievedStats.openTickets || 0 },
+        { name: "In Progress", value: retrievedStats.inProgressTickets || 0 },
+        { name: "Closed", value: retrievedStats.closedTickets || 0 },
+      ]);
+
+      // Bar chart data: tickets by priority
+      setTicketsByPriority([
+        { priority: "Critical", count: retrievedStats.criticalTickets || 0 },
+        { priority: "High", count: retrievedStats.highTickets || 0 },
+        { priority: "Medium", count: retrievedStats.mediumTickets || 0 },
+        { priority: "Low", count: retrievedStats.lowTickets || 0 },
+      ]);
+    } catch (err) {
+      console.error("Error fetching dashboard data:", err.message);
+    }
   };
 
-  // Pie chart data: ticket status breakdown
-  const ticketStatusData = [
-    { name: "Open", value: stats.openTickets },
-    { name: "In Progress", value: stats.inProgressTickets },
-    { name: "Closed", value: stats.closedTickets },
-  ];
-
   const STATUS_COLORS = ["#ef4444", "#f59e0b", "#4b5563"]; // red, yellow, gray
-
-  // Bar chart data: tickets by priority
-  const ticketsByPriority = [
-    { priority: "Critical", count: 3 },
-    { priority: "High", count: 12 },
-    { priority: "Medium", count: 15 },
-    { priority: "Low", count: 12 },
-  ];
 
   const PRIORITY_COLORS = {
     Critical: "#000000",
@@ -56,20 +71,19 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-10">
         <div className="bg-white rounded-2xl shadow p-6 text-center">
           <p className="text-gray-600 text-lg font-medium">Total Projects</p>
-          <p className="text-4xl font-bold text-blue-500">{stats.projects}</p>
+          <p className="text-4xl font-bold text-blue-500">{stats.projects || 0}</p>
         </div>
 
-        {/* 🔄 Swapped out Active Projects for Unassigned Tickets */}
         <div className="bg-white rounded-2xl shadow p-6 text-center">
           <p className="text-gray-600 text-lg font-medium">Unassigned Tickets</p>
           <p className="text-4xl font-bold text-orange-500">
-            {stats.unassignedTickets}
+            {stats.unassignedTickets || 0}
           </p>
         </div>
 
         <div className="bg-white rounded-2xl shadow p-6 text-center">
           <p className="text-gray-600 text-lg font-medium">Total Tickets</p>
-          <p className="text-4xl font-bold text-indigo-500">{stats.tickets}</p>
+          <p className="text-4xl font-bold text-indigo-500">{stats.tickets || 0}</p>
         </div>
       </div>
 
@@ -77,21 +91,15 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-10">
         <div className="bg-white rounded-2xl shadow p-6 text-center">
           <p className="text-gray-600 text-lg font-medium">Open Tickets</p>
-          <p className="text-4xl font-bold text-red-500">
-            {stats.openTickets}
-          </p>
+          <p className="text-4xl font-bold text-red-500">{stats.openTickets || 0}</p>
         </div>
         <div className="bg-white rounded-2xl shadow p-6 text-center">
           <p className="text-gray-600 text-lg font-medium">In Progress</p>
-          <p className="text-4xl font-bold text-yellow-500">
-            {stats.inProgressTickets}
-          </p>
+          <p className="text-4xl font-bold text-yellow-500">{stats.inProgressTickets || 0}</p>
         </div>
         <div className="bg-white rounded-2xl shadow p-6 text-center">
           <p className="text-gray-600 text-lg font-medium">Closed Tickets</p>
-          <p className="text-4xl font-bold text-gray-700">
-            {stats.closedTickets}
-          </p>
+          <p className="text-4xl font-bold text-gray-700">{stats.closedTickets || 0}</p>
         </div>
       </div>
 
