@@ -1,6 +1,10 @@
 import Ticket from "../models/TicketModel.js";
 import ProjectMember from "../models/ProjectMemberModel.js";
 
+import ActivityLog from "../models/ActivityLogModel.js";
+
+
+
 // -------------------------
 // Create ticket
 // -------------------------
@@ -104,17 +108,79 @@ export const getAssignedTicket = async (req, res) => {
 // -------------------------
 // Update a ticket
 // -------------------------
+
 export const updateTicket = async (req, res) => {
   try {
     const { ticketId } = req.params;
     const updates = req.body;
 
-    const ticket = await Ticket.findByIdAndUpdate(ticketId, updates, { new: true })
+    // Fetch current ticket with populated assignedTo and createdBy
+    const ticket = await Ticket.findById(ticketId)
       .populate("createdBy", "name email")
       .populate("assignedTo", "name email");
 
+      //console.log(ticket)
+
     if (!ticket) return res.status(404).json({ message: "Ticket not found" });
 
+    const logs = [];
+
+    // Helper function to log changes
+    const logChange = (field, oldValue, newValue) => {
+      logs.push(`${field} changed from "${oldValue}" to "${newValue}"`);
+    };
+
+    // Compare and log changes
+    if (updates.title && updates.title !== ticket.title) {
+      logChange("Title", ticket.title, updates.title);
+    }
+
+    if (updates.description && updates.description !== ticket.description) {
+      logs.push("Description updated");
+    }
+
+    if (updates.status && updates.status !== ticket.status) {
+      logChange("Status", ticket.status, updates.status);
+    }
+
+    if (updates.priority && updates.priority !== ticket.priority) {
+      logChange("Priority", ticket.priority, updates.priority);
+    }
+
+    if (updates.type && updates.type !== ticket.type) {
+      logChange("Type", ticket.type, updates.type);
+    }
+
+    if (
+      updates.assignedTo != null &&
+      updates.assignedTo.toString() !== (ticket.assignedTo?._id.toString() || "")
+    ) {
+      const oldName = ticket.assignedTo ? ticket.assignedTo.name : "Unassigned";
+      const newUser = await ProjectMember.find({projectId: ticket.projectId, userId: updates.assignedTo})
+        .populate("userId", "name")
+      console.log(newUser)
+      const newName = newUser ? newUser.userId.name : "Unassigned";
+      logs.push(`Assignee changed from "${oldName}" to "${newName}"`);
+    }
+
+    // Apply updates
+    Object.assign(ticket, updates);
+    await ticket.save();
+
+    // Re-populate assignedTo for accurate name
+    await ticket.populate("assignedTo", "name email");
+
+    // Save activity logs if there are any
+    if (logs.length > 0) {
+      const logEntries = logs.map(action => ({
+        ticketId: ticket._id,
+        userId: req.user._id,
+        action,
+      }));
+      await ActivityLog.insertMany(logEntries);
+    }
+
+    // Return updated ticket with readable assignedTo name
     const result = {
       ...ticket._doc,
       assignedName: ticket.assignedTo ? ticket.assignedTo.name : "Unassigned",
@@ -122,10 +188,10 @@ export const updateTicket = async (req, res) => {
 
     res.json(result);
   } catch (err) {
+    console.error(err);
     res.status(500).json({ message: "Error updating ticket", error: err.message });
   }
 };
-
 // -------------------------
 // Delete a ticket
 // -------------------------
