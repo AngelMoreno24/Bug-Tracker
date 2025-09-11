@@ -1,4 +1,4 @@
-import Attachment from "../models/Attachment.js";
+import Attachment from "../models/AttachmentModel.js";
 
 // -------------------------
 // Create new attachment
