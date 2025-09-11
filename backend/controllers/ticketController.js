@@ -158,8 +158,7 @@ export const updateTicket = async (req, res) => {
       const oldName = ticket.assignedTo ? ticket.assignedTo.name : "Unassigned";
       const newUser = await ProjectMember.find({projectId: ticket.projectId, userId: updates.assignedTo})
         .populate("userId", "name")
-      console.log(newUser)
-      const newName = newUser ? newUser.userId.name : "Unassigned";
+      const newName = newUser[0].userId? newUser[0].userId.name : "Unassigned";
       logs.push(`Assignee changed from "${oldName}" to "${newName}"`);
     }
 

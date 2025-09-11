@@ -8,6 +8,7 @@ import AddAttachmentForm from "../components/forms/AddAttachmentForm";
 
 import { getTicketDetails, updateTicket } from '../api/TicketAPI';
 import { createComment, getComments } from '../api/CommentAPI';
+import { getTicketLogs } from "../api/ActivityLogAPI"; // ✅ added
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -19,6 +20,7 @@ const ProjectTicketDetails = () => {
   const [ticketInfo, setTicketInfo] = useState({});
   const [comments, setComments] = useState([]);
   const [attachments, setAttachments] = useState([]);
+  const [logs, setLogs] = useState([]); // ✅ added
   const [ticketForm, setTicketForm] = useState({});
   const [commentForm, setCommentForm] = useState({ ticketId: id, message: "" });
   const [attachmentForm, setAttachmentForm] = useState({ file: "", uploader: "", notes: "" });
@@ -36,13 +38,12 @@ const ProjectTicketDetails = () => {
     if (token) {
       fetchTicketDetails();
       fetchCommentDetails();
+      fetchLogDetails(); // ✅ added
     }
   }, [token]);
 
   const fetchTicketDetails = async () => {
     try {
-
-      
       const ticketDetails = await getTicketDetails(id, token);
       setCommentForm({ ...commentForm, projectId: ticketDetails.projectId._id })
       setProjectId(ticketDetails.projectId._id);
@@ -52,7 +53,7 @@ const ProjectTicketDetails = () => {
 
       const info = {
         createdBy: ticketDetails.createdBy.name,
-        assignedTo: ticketDetails.assignedTo? ticketDetails.assignedTo.name: "-",
+        assignedTo: ticketDetails.assignedTo ? ticketDetails.assignedTo.name : "-",
         project: ticketDetails.projectId.name,
         priority: ticketDetails.priority,
         status: ticketDetails.status,
@@ -67,7 +68,7 @@ const ProjectTicketDetails = () => {
         id: ticketDetails.projectId._id,
         title: ticketDetails.title,
         description: ticketDetails.description,
-        assignedTo: ticketDetails.assignedTo? ticketDetails.assignedTo.name: "-",
+        assignedTo: ticketDetails.assignedTo ? ticketDetails.assignedTo.name : "-",
         priority: ticketDetails.priority,
         status: ticketDetails.status,
         type: ticketDetails.type,
@@ -91,6 +92,20 @@ const ProjectTicketDetails = () => {
     }
   };
 
+  const fetchLogDetails = async () => { // ✅ added
+    try {
+      const logDetails = await getTicketLogs(id, token);
+      const formatted = logDetails.map(l => ({
+        user: l.userId?.name || "Unknown User",
+        action: l.action,
+        date: l.createdAt,
+      }));
+      setLogs(formatted);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   const handleTicketEdit = async () => {
     const alteredFields = Object.fromEntries(
       Object.entries(ticketForm).filter(([key, value]) => value !== "" && value !== ticketInfo[key])
@@ -103,6 +118,7 @@ const ProjectTicketDetails = () => {
 
     await updateTicket(id, alteredFields, token);
     await fetchTicketDetails();
+    await fetchLogDetails(); // ✅ refresh logs after edit
     setEditTicketOpen(false);
   };
 
@@ -110,6 +126,7 @@ const ProjectTicketDetails = () => {
     console.log(commentForm)
     await createComment(commentForm, token);
     await fetchCommentDetails();
+    await fetchLogDetails(); // ✅ refresh logs after comment
     setCommentForm({ ticketId: id, message: "" });
     setAddCommentOpen(false);
   };
@@ -172,12 +189,9 @@ const ProjectTicketDetails = () => {
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(ticketInfo).map(([key, value]) => {
             let displayValue = value;
-
-            // Format dates for createdAt and updatedAt
             if (key === "createdAt" || key === "updatedAt") {
               displayValue = value ? new Date(value).toLocaleString() : "-";
             }
-
             return (
               <div key={key} className="bg-gray-50 p-3 rounded-lg shadow-sm">
                 <p className="font-bold text-sm">{key.charAt(0).toUpperCase() + key.slice(1)}</p>
@@ -194,6 +208,24 @@ const ProjectTicketDetails = () => {
             );
           })}
         </div>
+      </div>
+
+      {/* Activity Logs ✅ */}
+      <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
+        <div className="bg-blue-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Activity Logs</h2>
+        </div>
+        {logs.length > 0 ? (
+          logs.map((log, index) => (
+            <div key={index} className="border rounded-lg p-3 mb-2 bg-gray-50 hover:bg-gray-100 transition">
+              <p className="font-bold text-indigo-700">{log.user}</p>
+              <p className="whitespace-pre-wrap break-words">{log.action}</p>
+              <p className="text-xs text-gray-500 mt-1">{new Date(log.date).toLocaleString()}</p>
+            </div>
+          ))
+        ) : (
+          <p className="text-gray-500 italic">No activity logs available.</p>
+        )}
       </div>
 
       {/* Comments */}

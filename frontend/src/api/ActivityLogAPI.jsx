@@ -8,7 +8,7 @@ const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 export const getProjectLogs = async (projectId, token) => {
   try {
     const res = await axios.get(
-      `${BASE_URL}/api/activityLogs/project/${projectId}`,
+      `${BASE_URL}/api/activityLog/project/${projectId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
@@ -27,7 +27,7 @@ export const getProjectLogs = async (projectId, token) => {
 export const getTicketLogs = async (ticketId, token) => {
   try {
     const res = await axios.get(
-      `${BASE_URL}/api/activityLogs/ticket/${ticketId}`,
+      `${BASE_URL}/api/activityLog/ticket/${ticketId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,
@@ -46,7 +46,7 @@ export const getTicketLogs = async (ticketId, token) => {
 export const getUserLogs = async (userId, token) => {
   try {
     const res = await axios.get(
-      `${BASE_URL}/api/activityLogs/user/${userId}`,
+      `${BASE_URL}/api/activityLog/user/${userId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,

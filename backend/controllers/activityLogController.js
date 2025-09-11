@@ -26,7 +26,7 @@ export const getTicketLogs = async (req, res) => {
     const { ticketId } = req.params;
 
     const logs = await ActivityLog.find({ ticketId })
-      .populate("userId", "username email")
+      .populate("userId", "username email name")
       .sort({ createdAt: -1 });
 
     res.json(logs);
