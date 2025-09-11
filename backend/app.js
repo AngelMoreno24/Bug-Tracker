@@ -13,10 +13,12 @@ import companyMemberRoutes from "./routes/companyMemberRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import attachmentRoutes from "./routes/attachmentRoute.js"
-
-
+// Serve uploaded files statically
+import path from "path";
 
 const app = express();
+
+app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
 
 app.use(
   cors({
