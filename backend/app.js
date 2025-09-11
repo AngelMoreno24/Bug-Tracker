@@ -12,7 +12,7 @@ import companyRoutes from "./routes/companyRoutes.js";
 import companyMemberRoutes from "./routes/companyMemberRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
-import attacmentRoutes from "./routes/attachmentRoute.js"
+import attachmentRoutes from "./routes/attachmentRoute.js"
 
 
 
@@ -40,6 +40,7 @@ app.use("/api/company", companyRoutes);
 app.use("/api/companyMembers", companyMemberRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/dashboard", dashboardRoutes);
+app.use("/api/attachment", attachmentRoutes);
 
 
 export default app;
