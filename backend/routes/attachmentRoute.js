@@ -12,7 +12,7 @@ const router = express.Router();
 router.use(authenticateToken);
 
 // multer setup
-const upload = multer({ dest: "../uploads/" });
+const upload = multer({ dest: "uploads/" });
 
 router.post("/", upload.single("file"), addAttachment);
 router.get("/:ticketId", getAttachmentsByTicket);

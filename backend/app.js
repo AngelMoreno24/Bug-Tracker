@@ -40,7 +40,7 @@ app.use("/api/company", companyRoutes);
 app.use("/api/companyMembers", companyMemberRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/dashboard", dashboardRoutes);
-app.use("/api/attachment", attachmentRoutes);
+app.use("/api/attachments", attachmentRoutes);
 
 
 export default app;

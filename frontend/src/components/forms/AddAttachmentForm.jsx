@@ -1,15 +1,19 @@
 import React from "react";
 
 const AddAttachmentForm = ({ attachmentForm, setAttachmentForm }) => {
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    setAttachmentForm({ ...attachmentForm, file });
+  };
+
   return (
     <div>
       <div className="mb-3">
-        <label className="block text-sm font-semibold mb-1">File Name</label>
+        <label className="block text-sm font-semibold mb-1">Upload File</label>
         <input
-          type="text"
+          type="file"
           className="w-full border rounded px-2 py-1"
-          value={attachmentForm.file}
-          onChange={(e) => setAttachmentForm({ ...attachmentForm, file: e.target.value })}
+          onChange={handleFileChange}
         />
       </div>
       <div className="mb-3">

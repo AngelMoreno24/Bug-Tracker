@@ -9,6 +9,7 @@ import AddAttachmentForm from "../components/forms/AddAttachmentForm";
 import { getTicketDetails, updateTicket } from '../api/TicketAPI';
 import { createComment, getComments } from '../api/CommentAPI';
 import { getTicketLogs } from "../api/ActivityLogAPI";
+import { getTicketAttachments, addAttachment } from "../api/AttachmentAPI"; // updated import
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -48,6 +49,7 @@ const ProjectTicketDetails = () => {
       fetchTicketDetails();
       fetchCommentDetails();
       fetchLogDetails();
+      fetchAttachmentDetails();
     }
   }, [token]);
 
@@ -103,6 +105,16 @@ const ProjectTicketDetails = () => {
     }
   };
 
+  // fetch attachments from backend
+  const fetchAttachmentDetails = async () => {
+    try {
+      const attachmentDetails = await getTicketAttachments(id, token);
+      setAttachments(attachmentDetails || []);
+    } catch (err) {
+      console.error(err.message);
+    }
+  };
+
   const fetchLogDetails = async () => {
     try {
       const logDetails = await getTicketLogs(id, token);
@@ -141,11 +153,23 @@ const ProjectTicketDetails = () => {
     setAddCommentOpen(false);
   };
 
-  const handleAddAttachment = () => {
-    setAttachments([...attachments, { ...attachmentForm, created: new Date().toISOString().slice(0, 10) }]);
-    setAttachmentForm({ file: "", uploader: "", notes: "" });
-    setAddAttachmentOpen(false);
+  const handleAddAttachment = async () => {
+    if (!attachmentForm.file) return;
+
+    const formData = new FormData();
+    formData.append("ticketId", id);
+    formData.append("uploader", attachmentForm.uploader);
+    formData.append("notes", attachmentForm.notes);
+    formData.append("file", attachmentForm.file); // actual file upload
+
+    const result = await addAttachment(formData, token);
+    if (result) {
+      await fetchAttachmentDetails();
+      setAttachmentForm({ file: "", uploader: "", notes: "" });
+      setAddAttachmentOpen(false);
+    }
   };
+
 
   const getPriorityColor = (priority) => {
     if (!priority) return "bg-gray-300 text-black px-2 py-1 rounded-full text-xs";
