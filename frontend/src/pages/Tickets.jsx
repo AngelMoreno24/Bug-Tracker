@@ -52,7 +52,7 @@ const Tickets = () => {
         className="grid grid-cols-5 px-4 py-3 bg-white border-b hover:bg-gray-50 cursor-pointer transition"
       >
         <p className="text-center self-center">{title}</p>
-        <p className={`text-center self-center px-2 py-1 rounded w-24 m-auto ${getTypeColor(type)}`}>{type}</p>
+        <p className={`text-center self-center px-2 py-1 rounded w-28 m-auto ${getTypeColor(type)}`}>{type}</p>
         <p className="text-center self-center">{projectId?.name || "-"}</p>
         <p className={`text-center self-center px-2 py-1 rounded w-24 m-auto ${getPriorityColor(priority)}`}>{priority}</p>
         <p className="text-center self-center">{createdBy?.name || "-"}</p>
@@ -71,7 +71,7 @@ const Tickets = () => {
           <p className="text-center">Type</p>
           <p className="text-center">Project</p>
           <p className="text-center">Priority</p>
-          <p className="text-center">Submitter</p>
+          <p className="text-center">Created By</p>
         </div>
 
         {/* Tickets List */}
