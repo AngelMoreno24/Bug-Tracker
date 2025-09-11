@@ -135,7 +135,7 @@ const ProjectTicketDetails = () => {
     await createComment(commentForm, token);
     await fetchCommentDetails();
     await fetchLogDetails(); 
-    setCommentForm({ ticketId: id, message: "" });
+    setCommentForm({ ticketId: id, message: "", projectId: projectName});
     setAddCommentOpen(false);
   };
 
