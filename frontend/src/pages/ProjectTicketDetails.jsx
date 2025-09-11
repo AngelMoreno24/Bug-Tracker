@@ -95,6 +95,8 @@ const ProjectTicketDetails = () => {
         message: c.message,
         createDate: c.createdAt,
       }));
+      // ✅ sort newest first
+      formatted.sort((a, b) => new Date(b.createDate) - new Date(a.createDate));
       setComments(formatted);
     } catch (err) {
       console.error(err.message);
@@ -135,7 +137,7 @@ const ProjectTicketDetails = () => {
     await createComment(commentForm, token);
     await fetchCommentDetails();
     await fetchLogDetails(); 
-    setCommentForm({ ticketId: id, message: "", projectId: projectName});
+    setCommentForm({ ticketId: id, message: "", projectId: projectId});
     setAddCommentOpen(false);
   };
 
@@ -224,7 +226,7 @@ const ProjectTicketDetails = () => {
         </div>
       </div>
 
-      {/* Comments ✅ paginated */}
+      {/* Comments ✅ sorted newest first + paginated */}
       <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
         <div className="bg-green-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Comments</h2>
