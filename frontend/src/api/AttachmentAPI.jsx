@@ -2,26 +2,63 @@ import axios from "axios";
 
 const BASE_URL = import.meta.env.VITE_BACKEND_URL;
 
-export const getAttachments = async (ticketId, token) => {
-  const res = await axios.get(`${API_URL}/${ticketId}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data;
+// -------------------------
+// Get all attachments for a ticket
+// -------------------------
+export const getTicketAttachments = async (ticketId, token) => {
+  try {
+    const res = await axios.get(
+      `${BASE_URL}/api/attachments/${ticketId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Fetch ticket attachments failed:", err.response?.data || err.message);
+    return false;
+  }
 };
 
+// -------------------------
+// Upload a new attachment
+// -------------------------
 export const addAttachment = async (formData, token) => {
-  const res = await axios.post(API_URL, formData, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      "Content-Type": "multipart/form-data",
-    },
-  });
-  return res.data;
+  try {
+    const res = await axios.post(
+      `${BASE_URL}/api/attachments`,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "multipart/form-data",
+        },
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Upload attachment failed:", err.response?.data || err.message);
+    return false;
+  }
 };
 
-export const deleteAttachment = async (id, token) => {
-  const res = await axios.delete(`${API_URL}/${id}`, {
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  return res.data;
+// -------------------------
+// Delete an attachment
+// -------------------------
+export const deleteAttachment = async (attachmentId, token) => {
+  try {
+    const res = await axios.delete(
+      `${BASE_URL}/api/attachments/${attachmentId}`,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+        withCredentials: true,
+      }
+    );
+    return res.data;
+  } catch (err) {
+    console.error("Delete attachment failed:", err.response?.data || err.message);
+    return false;
+  }
 };
