@@ -8,7 +8,7 @@ import AddAttachmentForm from "../components/forms/AddAttachmentForm";
 
 import { getTicketDetails, updateTicket } from '../api/TicketAPI';
 import { createComment, getComments } from '../api/CommentAPI';
-import { getTicketLogs } from "../api/ActivityLogAPI"; // ✅ added
+import { getTicketLogs } from "../api/ActivityLogAPI";
 
 import { useAuth } from "../hooks/useAuth";
 
@@ -20,7 +20,16 @@ const ProjectTicketDetails = () => {
   const [ticketInfo, setTicketInfo] = useState({});
   const [comments, setComments] = useState([]);
   const [attachments, setAttachments] = useState([]);
-  const [logs, setLogs] = useState([]); // ✅ added
+  const [logs, setLogs] = useState([]); 
+
+  // ✅ Pagination states
+  const [commentPage, setCommentPage] = useState(1);
+  const [commentPageSize, setCommentPageSize] = useState(5);
+  const [attachmentPage, setAttachmentPage] = useState(1);
+  const [attachmentPageSize, setAttachmentPageSize] = useState(5);
+  const [logPage, setLogPage] = useState(1);
+  const [logPageSize, setLogPageSize] = useState(5);
+
   const [ticketForm, setTicketForm] = useState({});
   const [commentForm, setCommentForm] = useState({ ticketId: id, message: "" });
   const [attachmentForm, setAttachmentForm] = useState({ file: "", uploader: "", notes: "" });
@@ -38,7 +47,7 @@ const ProjectTicketDetails = () => {
     if (token) {
       fetchTicketDetails();
       fetchCommentDetails();
-      fetchLogDetails(); // ✅ added
+      fetchLogDetails();
     }
   }, [token]);
 
@@ -92,7 +101,7 @@ const ProjectTicketDetails = () => {
     }
   };
 
-  const fetchLogDetails = async () => { // ✅ added
+  const fetchLogDetails = async () => {
     try {
       const logDetails = await getTicketLogs(id, token);
       const formatted = logDetails.map(l => ({
@@ -118,15 +127,14 @@ const ProjectTicketDetails = () => {
 
     await updateTicket(id, alteredFields, token);
     await fetchTicketDetails();
-    await fetchLogDetails(); // ✅ refresh logs after edit
+    await fetchLogDetails(); 
     setEditTicketOpen(false);
   };
 
   const handleAddComment = async () => {
-    console.log(commentForm)
     await createComment(commentForm, token);
     await fetchCommentDetails();
-    await fetchLogDetails(); // ✅ refresh logs after comment
+    await fetchLogDetails(); 
     setCommentForm({ ticketId: id, message: "" });
     setAddCommentOpen(false);
   };
@@ -156,6 +164,12 @@ const ProjectTicketDetails = () => {
       case "task": return "bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-xs";
       default: return "bg-gray-300 text-black px-2 py-1 rounded-full text-xs";
     }
+  };
+
+  // Pagination helper
+  const paginate = (items, page, pageSize) => {
+    const start = (page - 1) * pageSize;
+    return items.slice(start, start + pageSize);
   };
 
   return (
@@ -210,25 +224,7 @@ const ProjectTicketDetails = () => {
         </div>
       </div>
 
-      {/* Activity Logs ✅ */}
-      <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
-        <div className="bg-blue-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
-          <h2 className="text-lg font-semibold">Activity Logs</h2>
-        </div>
-        {logs.length > 0 ? (
-          logs.map((log, index) => (
-            <div key={index} className="border rounded-lg p-3 mb-2 bg-gray-50 hover:bg-gray-100 transition">
-              <p className="font-bold text-indigo-700">{log.user}</p>
-              <p className="whitespace-pre-wrap break-words">{log.action}</p>
-              <p className="text-xs text-gray-500 mt-1">{new Date(log.date).toLocaleString()}</p>
-            </div>
-          ))
-        ) : (
-          <p className="text-gray-500 italic">No activity logs available.</p>
-        )}
-      </div>
-
-      {/* Comments */}
+      {/* Comments ✅ paginated */}
       <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
         <div className="bg-green-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Comments</h2>
@@ -239,16 +235,44 @@ const ProjectTicketDetails = () => {
             Add Comment
           </button>
         </div>
-        {comments.map((c, index) => (
+        {paginate(comments, commentPage, commentPageSize).map((c, index) => (
           <div key={index} className="border rounded-lg p-3 mb-2 bg-gray-50 hover:bg-gray-100 transition">
             <p className="font-bold text-indigo-700">{c.commenter}</p>
             <p className="whitespace-pre-wrap break-words">{c.message}</p>
             <p className="text-xs text-gray-500 mt-1">{new Date(c.createDate).toLocaleString()}</p>
           </div>
         ))}
+        {comments.length > commentPageSize && (
+          <div className="flex justify-between items-center mt-2">
+            <button
+              disabled={commentPage === 1}
+              onClick={() => setCommentPage(commentPage - 1)}
+              className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-sm">Page {commentPage} of {Math.ceil(comments.length / commentPageSize)}</span>
+            <button
+              disabled={commentPage * commentPageSize >= comments.length}
+              onClick={() => setCommentPage(commentPage + 1)}
+              className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+            >
+              Next
+            </button>
+            <select
+              value={commentPageSize}
+              onChange={(e) => { setCommentPageSize(Number(e.target.value)); setCommentPage(1); }}
+              className="border px-2 py-1 text-sm rounded"
+            >
+              {[5, 10, 20].map(size => (
+                <option key={size} value={size}>{size} per page</option>
+              ))}
+            </select>
+          </div>
+        )}
       </div>
 
-      {/* Attachments */}
+      {/* Attachments ✅ paginated */}
       <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
         <div className="bg-purple-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Attachments</h2>
@@ -259,7 +283,7 @@ const ProjectTicketDetails = () => {
             Add Attachment
           </button>
         </div>
-        {attachments.map((a, index) => (
+        {paginate(attachments, attachmentPage, attachmentPageSize).map((a, index) => (
           <div key={index} className="border rounded-lg p-2 mb-2 bg-gray-50 flex justify-between items-center">
             <a href={`/${a.file}`} download className="text-blue-600 underline">{a.file}</a>
             <span>{a.uploader}</span>
@@ -267,6 +291,82 @@ const ProjectTicketDetails = () => {
             <span className="text-xs text-gray-500">{a.created}</span>
           </div>
         ))}
+        {attachments.length > attachmentPageSize && (
+          <div className="flex justify-between items-center mt-2">
+            <button
+              disabled={attachmentPage === 1}
+              onClick={() => setAttachmentPage(attachmentPage - 1)}
+              className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+            >
+              Previous
+            </button>
+            <span className="text-sm">Page {attachmentPage} of {Math.ceil(attachments.length / attachmentPageSize)}</span>
+            <button
+              disabled={attachmentPage * attachmentPageSize >= attachments.length}
+              onClick={() => setAttachmentPage(attachmentPage + 1)}
+              className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+            >
+              Next
+            </button>
+            <select
+              value={attachmentPageSize}
+              onChange={(e) => { setAttachmentPageSize(Number(e.target.value)); setAttachmentPage(1); }}
+              className="border px-2 py-1 text-sm rounded"
+            >
+              {[5, 10, 20].map(size => (
+                <option key={size} value={size}>{size} per page</option>
+              ))}
+            </select>
+          </div>
+        )}
+      </div>
+
+      {/* Activity Logs ✅ paginated */}
+      <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
+        <div className="bg-blue-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
+          <h2 className="text-lg font-semibold">Activity Logs</h2>
+        </div>
+        {logs.length > 0 ? (
+          <>
+            {paginate(logs, logPage, logPageSize).map((log, index) => (
+              <div key={index} className="border rounded-lg p-3 mb-2 bg-gray-50 hover:bg-gray-100 transition">
+                <p className="font-bold text-indigo-700">{log.user}</p>
+                <p className="whitespace-pre-wrap break-words">{log.action}</p>
+                <p className="text-xs text-gray-500 mt-1">{new Date(log.date).toLocaleString()}</p>
+              </div>
+            ))}
+            {logs.length > logPageSize && (
+              <div className="flex justify-between items-center mt-2">
+                <button
+                  disabled={logPage === 1}
+                  onClick={() => setLogPage(logPage - 1)}
+                  className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+                >
+                  Previous
+                </button>
+                <span className="text-sm">Page {logPage} of {Math.ceil(logs.length / logPageSize)}</span>
+                <button
+                  disabled={logPage * logPageSize >= logs.length}
+                  onClick={() => setLogPage(logPage + 1)}
+                  className="text-blue-600 hover:underline text-sm disabled:opacity-50"
+                >
+                  Next
+                </button>
+                <select
+                  value={logPageSize}
+                  onChange={(e) => { setLogPageSize(Number(e.target.value)); setLogPage(1); }}
+                  className="border px-2 py-1 text-sm rounded"
+                >
+                  {[5, 10, 20].map(size => (
+                    <option key={size} value={size}>{size} per page</option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </>
+        ) : (
+          <p className="text-gray-500 italic">No activity logs available.</p>
+        )}
       </div>
 
       {editTicketOpen && (
