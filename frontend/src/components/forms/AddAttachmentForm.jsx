@@ -1,51 +1,33 @@
 import React from "react";
 
 const AddAttachmentForm = ({ attachmentForm, setAttachmentForm }) => {
-
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (!file) return;
-
-    setAttachmentForm({
-      ...attachmentForm,
-      file, // store the File object
-      originalName: file.name,
-      mimeType: file.type,
-    });
-  };
-
   return (
     <div>
       <div className="mb-3">
-        <label className="block text-sm font-semibold mb-1">Select File (Images or PDF)</label>
+        <label className="block text-sm font-semibold mb-1">File</label>
         <input
           type="file"
-          className="w-full border rounded px-2 py-1"
-          onChange={handleFileChange}
-          accept="image/*,application/pdf"
+          className="w-full"
+          onChange={(e) =>
+            setAttachmentForm({ ...attachmentForm, file: e.target.files[0] })
+          }
         />
       </div>
-
       <div className="mb-3">
         <label className="block text-sm font-semibold mb-1">Uploader</label>
         <input
           type="text"
           className="w-full border rounded px-2 py-1"
           value={attachmentForm.uploader}
-          onChange={(e) =>
-            setAttachmentForm({ ...attachmentForm, uploader: e.target.value })
-          }
+          onChange={(e) => setAttachmentForm({ ...attachmentForm, uploader: e.target.value })}
         />
       </div>
-
       <div className="mb-3">
         <label className="block text-sm font-semibold mb-1">Notes</label>
         <textarea
           className="w-full border rounded px-2 py-1"
           value={attachmentForm.notes}
-          onChange={(e) =>
-            setAttachmentForm({ ...attachmentForm, notes: e.target.value })
-          }
+          onChange={(e) => setAttachmentForm({ ...attachmentForm, notes: e.target.value })}
         />
       </div>
     </div>
