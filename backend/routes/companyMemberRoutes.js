@@ -13,9 +13,9 @@ const router = express.Router();
 router.use(authenticateToken);
 
 // Get all members in a project
-router.post("/", authorizeRoles("admin"), addCompanyMember);
-router.get("/", authorizeRoles("admin"),listCompanyMembers);
-router.delete("/", authorizeRoles("admin"), removeCompanyMember);
+router.post("/", addCompanyMember);
+router.get("/", listCompanyMembers);
+router.delete("/", removeCompanyMember);
 
 
 router.get("/myCompanies", myCompanies);
