@@ -84,10 +84,10 @@ export const getAssignedTickets = async ( token ) => {
 // -------------------------
 // Update a ticket
 // -------------------------
-export const updateTicket = async (ticketId, updates, token) => {
+export const updateTicket = async (projectId, ticketId, updates, token) => {
   try {
     const res = await axios.put(
-      `${BASE_URL}/api/tickets/${ticketId}`,
+      `${BASE_URL}/api/tickets/${projectId}/${ticketId}`,
       updates, // e.g. { title: "Updated", priority: "High" }
       {
         headers: { Authorization: `Bearer ${token}` },

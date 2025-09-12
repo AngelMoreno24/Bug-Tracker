@@ -16,7 +16,7 @@ import { useAuth } from "../hooks/useAuth";
 const ProjectTicketDetails = () => {
   const navigate = useNavigate();
   const { user, token } = useAuth();
-  const { id } = useParams();
+  const { projectIdParam,id } = useParams();
 
   const [ticketInfo, setTicketInfo] = useState({});
   const [comments, setComments] = useState([]);
@@ -154,7 +154,7 @@ const ProjectTicketDetails = () => {
       return;
     }
 
-    await updateTicket(id, alteredFields, token);
+    await updateTicket(projectIdParam, id, alteredFields, token);
     await fetchTicketDetails();
     await fetchLogDetails();
     setEditTicketOpen(false);
