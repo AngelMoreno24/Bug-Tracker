@@ -102,10 +102,10 @@ export const removeProjectMember = async (projectId, userId, token) => {
 // Edit a member from the project 
 // -------------------------
 
-export const editProjectMember = async (memberId, role, token) => {
+export const editProjectMember = async (projectId, memberId, role, token) => {
   try {
     const res = await axios.put(
-      `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${memberId}/edit`,
+      `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${projectId}/${memberId}/edit`,
       { role }, // body
       {
         headers: {
