@@ -38,6 +38,9 @@ const ProjectTicketDetails = () => {
   const [addCommentOpen, setAddCommentOpen] = useState(false);
   const [addAttachmentOpen, setAddAttachmentOpen] = useState(false);
 
+  // new: preview modal
+  const [previewAttachment, setPreviewAttachment] = useState(null);
+
   const [projectId, setProjectId] = useState('');
   const [projectName, setProjectName] = useState('');
   const [title, setTitle] = useState('');
@@ -206,6 +209,8 @@ const ProjectTicketDetails = () => {
     return items.slice(start, start + pageSize);
   };
 
+  const fileUrl = (file) => `http://localhost:3000/uploads/${file}`;
+
   return (
     <div className="p-6 box-border min-w-[790px] bg-gray-100">
       <h1
@@ -290,13 +295,12 @@ const ProjectTicketDetails = () => {
         </div>
         {paginate(attachments, attachmentPage, attachmentPageSize).map((a, index) => (
           <div key={index} className="border rounded-lg p-2 mb-2 bg-gray-50 flex justify-between items-center">
-            <a
-              href={`http://localhost:3000/uploads/${a.file}`}
-              download={a.originalName}
+            <button
               className="text-blue-600 underline"
+              onClick={() => setPreviewAttachment(a)}
             >
               {a.originalName}
-            </a>
+            </button>
             <span>{a.uploader}</span>
             <span className="truncate max-w-xs">{a.notes}</span>
             <span className="text-xs text-gray-500">{new Date(a.created).toLocaleDateString()}</span>
@@ -322,6 +326,7 @@ const ProjectTicketDetails = () => {
         )}
       </div>
 
+      {/* Modals */}
       {editTicketOpen && (
         <Modal title="Edit Ticket Details" onClose={() => setEditTicketOpen(false)} onSave={handleTicketEdit}>
           <EditTicketForm ticketForm={ticketForm} setTicketForm={setTicketForm} />
@@ -335,6 +340,34 @@ const ProjectTicketDetails = () => {
       {addAttachmentOpen && (
         <Modal title="Add Attachment" onClose={() => setAddAttachmentOpen(false)} onSave={handleAddAttachment}>
           <AddAttachmentForm attachmentForm={attachmentForm} setAttachmentForm={setAttachmentForm} />
+        </Modal>
+      )}
+      {previewAttachment && (
+        <Modal title={previewAttachment.originalName} onClose={() => setPreviewAttachment(null)}>
+          {previewAttachment.mimeType?.startsWith("image/") ? (
+            <img
+              src={fileUrl(previewAttachment.file)}
+              alt={previewAttachment.originalName}
+              className="max-w-full max-h-[70vh] object-contain rounded"
+            />
+          ) : previewAttachment.mimeType === "application/pdf" ? (
+            <iframe
+              src={fileUrl(previewAttachment.file)}
+              title={previewAttachment.originalName}
+              className="w-full h-[70vh] border rounded"
+            />
+          ) : (
+            <div className="space-y-3">
+              <p className="text-gray-700">Preview not available for this file type.</p>
+              <a
+                href={fileUrl(previewAttachment.file)}
+                download={previewAttachment.originalName}
+                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+              >
+                Download
+              </a>
+            </div>
+          )}
         </Modal>
       )}
     </div>
