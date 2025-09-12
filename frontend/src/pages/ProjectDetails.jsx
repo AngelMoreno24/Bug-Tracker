@@ -122,7 +122,7 @@ const ProjectDetails = () => {
         return (
             <div
                 key={key}
-                onClick={() => navigate(`/accounts/projects/ticket/${_id}`)}
+                onClick={() => navigate(`/accounts/projects/${id}/${_id}`)}
                 className='relative group grid grid-cols-4 px-4 py-3 bg-white border-b hover:bg-gray-50 cursor-pointer transition'
             >
                 <p className='text-center self-center font-medium'>{title}</p>
