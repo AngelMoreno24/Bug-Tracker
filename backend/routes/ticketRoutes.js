@@ -9,6 +9,7 @@ import {
 } from "../controllers/ticketController.js";
 
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
+import { authorizeRoles } from "../middleware/roleMiddleware.js"; 
 
 const router = express.Router();
 
@@ -27,7 +28,7 @@ router.get("/:ticketId/details", getTicketDetails);
 router.get("/", getAssignedTicket);
 
 // Update a ticket
-router.put("/:ticketId", updateTicket);
+router.put("/:ticketId", authorizeRoles("Manager", "Admin"), updateTicket);
 
 // Delete a ticket
 router.delete("/:ticketId", deleteTicket);
