@@ -28,9 +28,9 @@ router.get("/:ticketId/details", getTicketDetails);
 router.get("/", getAssignedTicket);
 
 // Update a ticket
-router.put("/:ticketId", authorizeRoles("Manager", "Admin"), updateTicket);
+router.put("/:projectId/:ticketId", authorizeRoles("Manager", "Admin"), updateTicket);
 
 // Delete a ticket
-router.delete("/:ticketId", deleteTicket);
+router.delete("/:projectId/:ticketId", authorizeRoles("Manager", "Admin"), deleteTicket);
 
 export default router;
