@@ -57,7 +57,7 @@ const UserManager = () => {
   };
 
   const handleEditProjectMember = async () => {
-    await editProjectMember(editProjectMemberForm.id, editProjectMemberForm.role, token);
+    await editProjectMember(id, editProjectMemberForm.id, editProjectMemberForm.role, token);
     fetchProjectMembers();
     fetchPossibleProjectMembers();
     setEditProjectMemberForm({ name: "", role: "" });

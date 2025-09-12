@@ -7,7 +7,7 @@ export const authorizeRoles = (...roles) => async (req, res, next) => {
 
     const membership = await ProjectMember.findOne({ userId, projectId });
 
-    if (!membership || !allowedRoles.includes(membership.role)) {
+    if (!membership || !roles.includes(membership.role)) {
       return res.status(403).json({ message: "Forbidden: insufficient project role" });
     }
 
