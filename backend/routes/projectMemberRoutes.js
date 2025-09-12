@@ -15,9 +15,9 @@ router.use(authenticateToken);
 
 // Get all members in a project
 router.get("/:projectId", getProjectMembers);
-router.post("/:id/members", authorizeRoles("manager", "admin"),addProjectMember);
-router.delete("/:id", authorizeRoles("manager", "admin"), removeProjectMember);
-router.put("/:memberId/edit", authorizeRoles("manager", "admin"), editProjectMembers);
+router.post("/:projectId/members", authorizeRoles("Manager", "Admin"),addProjectMember);
+router.delete("/:projectId", authorizeRoles("Manager", "Admin"), removeProjectMember);
+router.put("/:projectId/:memberId/edit", authorizeRoles("Manager", "Admin"), editProjectMembers);
 router.get("/:projectId/unassigned", getPossibleProjectMembers);
 
 export default router;

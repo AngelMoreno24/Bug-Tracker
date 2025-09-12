@@ -8,7 +8,7 @@ import Company from "../models/CompanyModel.js";
 // -------------------------
 export const addProjectMember = async (req, res) => {
   try {
-    const projectId = req.params.id;
+    const projectId = req.params.projectId;
     const { userId, role } = req.body;
 
     // Only Manager can add members
@@ -39,7 +39,7 @@ export const addProjectMember = async (req, res) => {
 // -------------------------
 export const removeProjectMember = async (req, res) => {
   try {
-    const projectId = req.params.id;
+    const projectId = req.params.projectId;
     const { userId } = req.body;
 
     const membership = await ProjectMember.findOne({ projectId, userId: req.user._id });
