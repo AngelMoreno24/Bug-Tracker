@@ -1,7 +1,10 @@
-// index.js
+// app.js
 import express from 'express';
 import cors from 'cors';
 import cookieParser from "cookie-parser";
+import path from "path";
+import { fileURLToPath } from "url";
+
 import userRoutes from './routes/userRoutes.js';
 import authRoutes from "./routes/authRoutes.js";
 import projectRoutes from "./routes/projectRoutes.js";
@@ -13,23 +16,25 @@ import companyMemberRoutes from "./routes/companyMemberRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import attachmentRoutes from "./routes/attachmentRoute.js"
-// Serve uploaded files statically
-import path from "path";
 
 const app = express();
 
-app.use("/uploads", express.static(path.join(process.cwd(), "uploads")));
+// Needed for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+// Serve uploads folder publicly
+app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
 app.use(
   cors({
     origin: "http://localhost:5173", // your frontend URL
-    credentials: true,               // allow cookies/auth headers
+    credentials: true,
   })
 );
 
 app.use(express.json());
-app.use(cookieParser()); // ✅ Needed to read cookies
-
+app.use(cookieParser());
 
 // Routes
 app.use("/api/auth", authRoutes);
@@ -43,6 +48,5 @@ app.use("/api/companyMembers", companyMemberRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/attachments", attachmentRoutes);
-
 
 export default app;
