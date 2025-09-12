@@ -94,7 +94,7 @@ export const removeCompanyMember = async (req, res) => {
 export const myCompanies = async (req, res) => {
   try {
     // ✅ Find all company memberships for the logged-in user
-    const memberships = await CompanyMember.find({ userId: req.user._id })
+    const memberships = await CompanyMember.find({ userId: req.user._id, role: "Admin" || "Manager" })
       .populate("companyId", "name"); // only get company name (from Company model)
 
     // ✅ Format response to include role + company details
