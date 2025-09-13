@@ -20,4 +20,17 @@ router.delete("/:projectId", authorizeRoles("Manager", "Admin"), removeProjectMe
 router.put("/:projectId/:memberId/edit", authorizeRoles("Manager", "Admin"), editProjectMembers);
 router.get("/:projectId/unassigned", getPossibleProjectMembers);
 
+
+// Get membership role for project
+router.get("/:projectId/membership", async (req, res) => {
+  const { projectId } = req.params;
+  const userId = req.user.id;
+
+  const membership = await ProjectMember.findOne({ projectId, userId });
+  if (!membership) return res.status(404).json({ message: "Not a project member" });
+
+  res.json({ role: membership.role });
+});
+
+
 export default router;
