@@ -8,6 +8,7 @@ import {
 } from "../controllers/projectMemberController.js";
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
 import { authorizeRoles } from "../middleware/roleMiddleware.js"; 
+import ProjectMember from "../models/ProjectMemberModel.js";
 
 const router = express.Router();
 
@@ -29,6 +30,7 @@ router.get("/:projectId/membership", async (req, res) => {
   const membership = await ProjectMember.findOne({ projectId, userId });
   if (!membership) return res.status(404).json({ message: "Not a project member" });
 
+  console.log(membership.role)
   res.json({ role: membership.role });
 });
 

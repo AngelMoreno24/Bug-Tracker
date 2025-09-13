@@ -130,7 +130,9 @@ export const editProjectMember = async (projectId, memberId, role, token) => {
 
 export const getProjectMembership = async (projectId, token) => {
   try {
-    const res = await axios.get(`${BASE_URL}/api/projects/${projectId}/membership`, {
+    const res = await axios.get(
+    `${import.meta.env.VITE_BACKEND_URL}/api/projectMembers/${projectId}/membership`, 
+    {
       headers: { Authorization: `Bearer ${token}` },
       withCredentials: true,
     });

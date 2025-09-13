@@ -11,6 +11,7 @@ export function useProjectRole(projectId, token) {
     const fetchRole = async () => {
       setLoading(true);
       const membership = await getProjectMembership(projectId, token);
+      console.log(membership)
       if (membership) {
         setRole(membership.role);
       } else {

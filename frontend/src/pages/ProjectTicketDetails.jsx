@@ -12,11 +12,12 @@ import { getTicketLogs } from "../api/ActivityLogAPI";
 import { getTicketAttachments, addAttachment } from "../api/AttachmentAPI";
 
 import { useAuth } from "../hooks/useAuth";
+import { useProjectRole } from "../hooks/useProjectRole";
 
 const ProjectTicketDetails = () => {
   const navigate = useNavigate();
   const { user, token } = useAuth();
-  const { projectIdParam,id } = useParams();
+  const { projectIdParam, id } = useParams();
 
   const [ticketInfo, setTicketInfo] = useState({});
   const [comments, setComments] = useState([]);
@@ -38,13 +39,15 @@ const ProjectTicketDetails = () => {
   const [addCommentOpen, setAddCommentOpen] = useState(false);
   const [addAttachmentOpen, setAddAttachmentOpen] = useState(false);
 
-  // new: preview modal
   const [previewAttachment, setPreviewAttachment] = useState(null);
 
   const [projectId, setProjectId] = useState('');
   const [projectName, setProjectName] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
+
+  // 🔹 Get user role for this project
+  const { role, loading: roleLoading } = useProjectRole(projectId, token);
 
   useEffect(() => {
     if (token) {
@@ -211,6 +214,10 @@ const ProjectTicketDetails = () => {
 
   const fileUrl = (file) => `http://localhost:3000/uploads/${file}`;
 
+  if (roleLoading) {
+    return <p className="text-gray-500 italic">Loading permissions...</p>;
+  }
+
   return (
     <div className="p-6 box-border min-w-[790px] bg-gray-100">
       <h1
@@ -231,12 +238,14 @@ const ProjectTicketDetails = () => {
       <div className="border rounded-xl shadow-sm bg-white mb-6 min-w-[770px]">
         <div className="bg-amber-200 rounded-t-xl p-4 flex justify-between items-center">
           <h2 className="text-xl font-bold">Ticket Details</h2>
-          <button
-            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
-            onClick={() => setEditTicketOpen(true)}
-          >
-            Edit
-          </button>
+          {["Admin", "Manager"].includes(role) && (
+            <button
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
+              onClick={() => setEditTicketOpen(true)}
+            >
+              Edit
+            </button>
+          )}
         </div>
         <div className="p-6 grid grid-cols-1 md:grid-cols-2 gap-4">
           {Object.entries(ticketInfo).map(([key, value]) => {
@@ -266,12 +275,14 @@ const ProjectTicketDetails = () => {
       <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
         <div className="bg-green-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Comments</h2>
-          <button
-            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
-            onClick={() => setAddCommentOpen(true)}
-          >
-            Add Comment
-          </button>
+          {role && (
+            <button
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
+              onClick={() => setAddCommentOpen(true)}
+            >
+              Add Comment
+            </button>
+          )}
         </div>
         {paginate(comments, commentPage, commentPageSize).map((c, index) => (
           <div key={index} className="border rounded-lg p-3 mb-2 bg-gray-50 hover:bg-gray-100 transition">
@@ -286,12 +297,14 @@ const ProjectTicketDetails = () => {
       <div className="border rounded-xl shadow-sm p-4 bg-white mb-6 min-w-[770px]">
         <div className="bg-purple-200 rounded-t-xl p-3 flex justify-between items-center mb-4">
           <h2 className="text-lg font-semibold">Attachments</h2>
-          <button
-            className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
-            onClick={() => setAddAttachmentOpen(true)}
-          >
-            Add Attachment
-          </button>
+          {role && (
+            <button
+              className="bg-blue-500 text-white px-3 py-1 rounded hover:bg-blue-600 text-sm"
+              onClick={() => setAddAttachmentOpen(true)}
+            >
+              Add Attachment
+            </button>
+          )}
         </div>
         {paginate(attachments, attachmentPage, attachmentPageSize).map((a, index) => (
           <div key={index} className="border rounded-lg p-2 mb-2 bg-gray-50 flex justify-between items-center">
