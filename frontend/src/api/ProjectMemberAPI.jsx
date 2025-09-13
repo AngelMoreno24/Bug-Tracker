@@ -121,3 +121,22 @@ export const editProjectMember = async (projectId, memberId, role, token) => {
     return false;
   }
 };
+
+
+
+// -------------------------
+// Get user's role for a project 
+// -------------------------
+
+export const getProjectMembership = async (projectId, token) => {
+  try {
+    const res = await axios.get(`${BASE_URL}/api/projects/${projectId}/membership`, {
+      headers: { Authorization: `Bearer ${token}` },
+      withCredentials: true,
+    });
+    return res.data; // { role: "Admin" }
+  } catch (err) {
+    console.error("Fetch project membership failed:", err.response?.data || err.message);
+    return false;
+  }
+};
