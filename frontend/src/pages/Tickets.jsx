@@ -11,6 +11,7 @@ const Tickets = () => {
   const fetchTickets = async () => {
     try {
       const ticketList = await getAssignedTickets(token);
+      console.log(ticketList)
       // Sort tickets by createdAt descending (most recent first)
       const sortedTickets = ticketList.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
       setTickets(sortedTickets);
@@ -48,7 +49,7 @@ const Tickets = () => {
     return (
       <div
         key={key}
-        onClick={() => navigate(`/accounts/projects/ticket/${_id}`)}
+        onClick={() => navigate(`/accounts/projects/${projectId._id}/${_id}`)}
         className="grid grid-cols-5 px-4 py-3 bg-white border-b hover:bg-gray-50 cursor-pointer transition"
       >
         <p className="text-center self-center">{title}</p>
