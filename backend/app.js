@@ -16,6 +16,7 @@ import companyMemberRoutes from "./routes/companyMemberRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import attachmentRoutes from "./routes/attachmentRoute.js"
+import fetchRoleRoutes from "./routes/fetchRoleRoutes.js"
 
 const app = express();
 
@@ -48,5 +49,6 @@ app.use("/api/companyMembers", companyMemberRoutes);
 app.use("/api/comments", commentRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/attachments", attachmentRoutes);
+app.use("/api/fetchRoles", fetchRoleRoutes);
 
 export default app;
