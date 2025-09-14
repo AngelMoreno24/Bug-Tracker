@@ -16,6 +16,8 @@ import companyMemberRoutes from "./routes/companyMemberRoutes.js";
 import commentRoutes from "./routes/commentRoutes.js";
 import dashboardRoutes from "./routes/dashboardRoutes.js";
 import attachmentRoutes from "./routes/attachmentRoute.js"
+import dotenv from "dotenv";
+dotenv.config();
 
 const app = express();
 
