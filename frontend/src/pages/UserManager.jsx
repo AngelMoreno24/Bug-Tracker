@@ -59,7 +59,7 @@ const UserManager = () => {
           <input
             type="text"
             className="border rounded px-3 py-2 w-64"
-            placeholder="Enter invite ID..."
+            placeholder="Enter user email..."
             value={inviteId}
             onChange={(e) => setInviteId(e.target.value)}
           />
