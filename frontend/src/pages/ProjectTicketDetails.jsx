@@ -185,7 +185,23 @@ const ProjectTicketDetails = () => {
     setAttachmentForm({ file: null, uploader: "", notes: "" });
     setAddAttachmentOpen(false);
   };
-
+  const getStatusColor = (status) => {
+    if (!status) return "bg-gray-300 text-black px-2 py-1 rounded-full text-xs";
+    switch (status.toLowerCase()) {
+      case "open": 
+        return "bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs";
+      case "in progress": 
+        return "bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs";
+      case "resolved": 
+        return "bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs";
+      case "closed": 
+        return "bg-gray-400 text-white px-2 py-1 rounded-full text-xs";
+      case "reopened": 
+        return "bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-xs";
+      default: 
+        return "bg-gray-300 text-black px-2 py-1 rounded-full text-xs";
+    }
+  };
   const getPriorityColor = (priority) => {
     if (!priority) return "bg-gray-300 text-black px-2 py-1 rounded-full text-xs";
     switch (priority.toLowerCase()) {
@@ -261,6 +277,8 @@ const ProjectTicketDetails = () => {
                     <span className={getPriorityColor(value)}>{value}</span>
                   ) : key === "type" ? (
                     <span className={getTypeColor(value)}>{value}</span>
+                  ) : key === "status" ? (
+                    <span className={getStatusColor(value)}>{value}</span>
                   ) : (
                     displayValue
                   )}
