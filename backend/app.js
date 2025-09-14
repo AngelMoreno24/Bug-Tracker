@@ -28,7 +28,7 @@ app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
 app.use(
   cors({
-    origin: "http://localhost:5173", // your frontend URL
+    origin: ORIGIN, // your frontend URL
     credentials: true,
   })
 );
