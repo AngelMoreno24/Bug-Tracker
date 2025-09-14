@@ -1,4 +1,3 @@
-// src/components/AuthContext.jsx
 import React, { createContext, useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,13 +7,13 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
+  const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
   const [loading, setLoading] = useState(true);
-  const [token, setToken] = useState(null); // store access token in memory
 
-  // ✅ Configure axios to send cookies by default
+  // Configure axios to send cookies
   axios.defaults.withCredentials = true;
 
-  // 🔹 On mount, refresh token
+  // Refresh access token on mount
   useEffect(() => {
     const refreshUser = async () => {
       try {
@@ -23,15 +22,16 @@ export function AuthProvider({ children }) {
           {},
           { withCredentials: true }
         );
-        setToken(res.data.token); // new access token
+        setToken(res.data.token);
         setUser(res.data.user);
 
-        // redirect if user exists
-        //navigate("/accounts/dashboard", { replace: true });
-      } catch {
+        // store token in localStorage so reloads keep it
+        localStorage.setItem("accessToken", res.data.token);
+      } catch (err) {
         console.log("User not logged in");
         setUser(null);
         setToken(null);
+        localStorage.removeItem("accessToken");
       } finally {
         setLoading(false);
       }
@@ -40,7 +40,7 @@ export function AuthProvider({ children }) {
     refreshUser();
   }, []);
 
-  // 🔹 Login function
+  // Login function
   const login = async (email, password) => {
     try {
       const res = await axios.post(
@@ -51,10 +51,9 @@ export function AuthProvider({ children }) {
 
       setToken(res.data.token);
       setUser(res.data.user);
+      localStorage.setItem("accessToken", res.data.token);
 
-      // redirect after successful login
       navigate("/accounts/dashboard", { replace: true });
-
       return true;
     } catch (err) {
       console.error("Login failed:", err.response?.data || err.message);
@@ -62,7 +61,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // 🔹 Demo login
+  // Demo login
   const demoLogin = async () => {
     try {
       const res = await axios.post(
@@ -73,10 +72,9 @@ export function AuthProvider({ children }) {
 
       setToken(res.data.token);
       setUser(res.data.user);
+      localStorage.setItem("accessToken", res.data.token);
 
-      // redirect after successful demo login
       navigate("/accounts/dashboard", { replace: true });
-
       return true;
     } catch (err) {
       console.error("Demo login failed:", err.response?.data || err.message);
@@ -84,7 +82,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // 🔹 Logout
+  // Logout
   const logout = async () => {
     try {
       await axios.post(
@@ -94,13 +92,18 @@ export function AuthProvider({ children }) {
       );
       setUser(null);
       setToken(null);
+      localStorage.removeItem("accessToken");
 
-      // redirect after logout
       navigate("/", { replace: true });
     } catch (err) {
       console.error("Logout failed:", err.response?.data || err.message);
     }
   };
+
+  // Block rendering until refresh completes
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
   return (
     <AuthContext.Provider
