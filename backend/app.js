@@ -28,10 +28,22 @@ const __dirname = path.dirname(__filename);
 // Serve uploads folder publicly
 app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
+const allowedOrigins = [
+  process.env.ORIGIN, 
+];
+
 app.use(
   cors({
-    origin: process.env.ORIGIN, // your frontend URL
-    credentials: true,
+    origin: function (origin, callback) {
+      // allow requests with no origin (like Postman)
+      if (!origin) return callback(null, true);
+      if (allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      } else {
+        return callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true, // allows cookies
   })
 );
 
