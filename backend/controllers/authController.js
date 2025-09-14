@@ -79,13 +79,13 @@ export const login = async (req, res) => {
     const token = generateToken(user);
     const refreshToken = generateRefreshToken(user);
 
-    // ✅ Set refresh token cookie correctly for local + deployed
+    // ✅ Set refresh token cookie properly for Netlify
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true, // JS cannot access
+      httpOnly: true,                 // JS cannot read
       secure: process.env.NODE_ENV === "production", // HTTPS only in production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // cross-site cookies in production
-      path: "/", // available to all routes
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // cross-origin for deployed frontend
+      path: "/",                       // sent to all backend routes
+      maxAge: 7 * 24 * 60 * 60 * 1000 // 7 days
     });
 
     res.json({
@@ -97,6 +97,7 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
 // -------------------------
 // Refresh Token
 // -------------------------
@@ -111,18 +112,18 @@ export const refresh = async (req, res) => {
     if (!user) return res.status(401).json({ message: "User not found" });
 
     // generate new access token
-    const token = generateToken(user);
+    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET, { expiresIn: "15m" });
 
-    // optionally rotate refresh token
-    const newRefreshToken = generateRefreshToken(user);
+    // rotate refresh token for extra security
+    const newRefreshToken = jwt.sign({ userId: user._id }, process.env.JWT_REFRESH_SECRET, { expiresIn: "7d" });
 
-    // set new refresh token as httpOnly cookie
+    // set new refresh token cookie
     res.cookie("refreshToken", newRefreshToken, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === "production", // HTTPS only in production
-      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // cross-site in production
-      path: "/", // available on all routes
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      path: "/",
+      maxAge: 7 * 24 * 60 * 60 * 1000
     });
 
     res.json({

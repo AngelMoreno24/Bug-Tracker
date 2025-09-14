@@ -24,14 +24,9 @@ export function AuthProvider({ children }) {
         );
         setToken(res.data.token);
         setUser(res.data.user);
-
-        // store token in localStorage so reloads keep it
-        localStorage.setItem("accessToken", res.data.token);
-      } catch (err) {
-        console.log("User not logged in");
-        setUser(null);
+      } catch {
         setToken(null);
-        localStorage.removeItem("accessToken");
+        setUser(null);
       } finally {
         setLoading(false);
       }
