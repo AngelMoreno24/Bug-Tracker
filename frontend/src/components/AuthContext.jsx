@@ -21,7 +21,11 @@ export function AuthProvider({ children }) {
         const res = await axios.post(
           `${import.meta.env.VITE_BACKEND_URL}/api/auth/refresh`,
           {},
-          { withCredentials: true }
+          { 
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          withCredentials: true }
         );
         setToken(res.data.token); // new access token
         setUser(res.data.user);
@@ -38,7 +42,7 @@ export function AuthProvider({ children }) {
     };
 
     refreshUser();
-  }, []);
+  }, [token]);
 
   // 🔹 Login function
   const login = async (email, password) => {
