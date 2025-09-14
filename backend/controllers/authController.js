@@ -79,10 +79,12 @@ export const login = async (req, res) => {
     const token = generateToken(user);
     const refreshToken = generateRefreshToken(user);
 
+    // ✅ Set refresh token cookie correctly for local + deployed
     res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: process.env.NODE_ENV === "production" ? "strict" : "lax",
+      httpOnly: true, // JS cannot access
+      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // cross-site cookies in production
+      path: "/", // available to all routes
       maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
     });
 
@@ -95,7 +97,6 @@ export const login = async (req, res) => {
     res.status(500).json({ message: "Server error" });
   }
 };
-
 // -------------------------
 // Refresh Token
 // -------------------------
@@ -109,13 +110,27 @@ export const refresh = async (req, res) => {
     const user = await User.findById(decoded.userId).select("-password");
     if (!user) return res.status(401).json({ message: "User not found" });
 
+    // generate new access token
     const token = generateToken(user);
+
+    // optionally rotate refresh token
+    const newRefreshToken = generateRefreshToken(user);
+
+    // set new refresh token as httpOnly cookie
+    res.cookie("refreshToken", newRefreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production", // HTTPS only in production
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // cross-site in production
+      path: "/", // available on all routes
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
 
     res.json({
       token,
       user: { id: user._id, name: user.name, role: user.role },
     });
   } catch (error) {
+    console.error("Refresh error:", error);
     res.status(403).json({ message: "Invalid refresh token" });
   }
 };
