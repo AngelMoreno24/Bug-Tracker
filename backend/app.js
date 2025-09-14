@@ -28,7 +28,7 @@ app.use("/uploads", express.static(path.join(path.resolve(), "uploads")));
 
 app.use(
   cors({
-    origin: ORIGIN, // your frontend URL
+    origin: process.env.ORIGIN, // your frontend URL
     credentials: true,
   })
 );
