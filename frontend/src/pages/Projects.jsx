@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import Modal from "../components/Modal"; 
 import AddProjectForm from "../components/forms/AddProjectForm";
-import { getProject, createProject } from '../api/ProjectAPI';
+import { getProject, createProject, deleteProject } from '../api/ProjectAPI';
 import { useAuth } from "../hooks/useAuth"; 
 
 const Projects = () => {
@@ -18,6 +18,16 @@ const Projects = () => {
     await fetchProjects()
     setProjectForm({ title: "", description: "", companyId: "" });
     setAddProjectOpen(false);
+  };
+
+  const handleDeleteProject = async (projectId) => {
+    const confirmDelete = window.confirm("Are you sure you want to delete this project?");
+    if (!confirmDelete) return;
+
+    const success = await deleteProject(projectId, token);
+    if (success) {
+      await fetchProjects();
+    }
   };
 
   const fetchProjects = async () => {
@@ -59,23 +69,32 @@ const Projects = () => {
   const row = (title, description, id, index) => {
     return (
       <div 
-        className={`grid grid-cols-4 px-4 py-3 text-gray-700 ${
+        className={`grid grid-cols-5 px-4 py-3 text-gray-700 ${
           index % 2 === 0 ? "bg-gray-50" : "bg-white"
         } hover:bg-blue-50 transition`}
       >
         <p className='self-center text-center font-medium'>{title}</p>
         <p className='self-center text-center text-sm text-gray-600'>{description}</p>
+        
         <button 
           onClick={() => navigate(`/accounts/projects/${id}`)} 
           className='bg-blue-500 hover:bg-blue-600 text-white rounded-md px-3 py-1 m-auto shadow-sm'
         >
           Details
         </button>
+        
         <button 
           onClick={() => navigate(`/accounts/projects/${id}/members`)} 
           className='bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-3 py-1 m-auto shadow-sm'
         >
           Manage Users
+        </button>
+
+        <button 
+          onClick={() => handleDeleteProject(id)} 
+          className='bg-red-500 hover:bg-red-600 text-white rounded-md px-3 py-1 m-auto shadow-sm'
+        >
+          Delete
         </button>
       </div>
     )
@@ -94,10 +113,10 @@ const Projects = () => {
       </div>
 
       <div className='bg-white rounded-lg shadow overflow-hidden'>
-        <div className='grid grid-cols-4 px-4 py-3 bg-gray-200 font-semibold text-gray-700'>
+        <div className='grid grid-cols-5 px-4 py-3 bg-gray-200 font-semibold text-gray-700'>
           <p className='text-center'>Project Name</p>
           <p className='text-center'>Project Description</p>
-          <p className='text-center col-span-2'>Actions</p>
+          <p className='text-center col-span-3'>Actions</p>
         </div>
         
         {projects.map((project, index) => (
