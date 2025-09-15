@@ -93,3 +93,27 @@ export const updateProject = async (projectId, updatedData, token) => {
     return false;
   }
 };
+
+
+
+// -------------------------
+// Update project info (Manager/Admin only)
+// -------------------------
+export const deleteProject = async (projectId, token) => {
+  try {
+    const res = await axios.delete(
+      `${import.meta.env.VITE_BACKEND_URL}/api/projects/${projectId}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+        withCredentials: true,
+      }
+    );
+
+    return res.data;
+  } catch (err) {
+    console.error("Delete project failed:", err.response?.data || err.message);
+    return false;
+  }
+};
