@@ -11,12 +11,29 @@ const Projects = () => {
 
   const [projects, setProjects] = useState([]);
   const [addProjectOpen, setAddProjectOpen] = useState(false);
-  const [projectForm, setProjectForm] = useState({ title: "", description: "", companyId: "" });
+
+  // ✅ auto-fill companyId from logged-in user if available
+  const [projectForm, setProjectForm] = useState({ 
+    title: "", 
+    description: "", 
+    companyId: user?.companyId || "" 
+  });
 
   const handleAddProject = async () => {
-    await createProject(projectForm.title, projectForm.description, projectForm.companyId, token)
-    await fetchProjects()
-    setProjectForm({ title: "", description: "", companyId: "" });
+    if (!projectForm.companyId) {
+      alert("Missing companyId. Please select your company.");
+      return;
+    }
+
+    await createProject(
+      projectForm.title, 
+      projectForm.description, 
+      projectForm.companyId, 
+      token
+    );
+
+    await fetchProjects();
+    setProjectForm({ title: "", description: "", companyId: user?.companyId || "" });
     setAddProjectOpen(false);
   };
 
@@ -38,8 +55,8 @@ const Projects = () => {
           id: item.project._id,
           title: item.project.name,
           description: item.project.description,
-          role: item.role,
-        }));      
+          role: item.role, // important for enabling/disabling buttons
+        })); 
         setProjects(mappedProjects);
       }
     } catch (err) {
@@ -53,8 +70,8 @@ const Projects = () => {
     }
   }, [token]);
 
+  // Demo data for portfolio
   useEffect(() => {
-    // demo data for portfolio
     const projectsArray = [
       { id: 1, title: "Website", description: "Company website with marketing pages" },
       { id: 2, title: "Dashboard", description: "Internal analytics dashboard" },
@@ -66,7 +83,9 @@ const Projects = () => {
     setProjects(projectsArray);
   }, []);
 
-  const row = (title, description, id, index) => {
+  const row = (title, description, id, role, index) => {
+    const canEdit = role === "Manager" || role === "Admin"; // only allow delete/manage if user has permission
+
     return (
       <div 
         className={`grid grid-cols-5 px-4 py-3 text-gray-700 ${
@@ -85,20 +104,24 @@ const Projects = () => {
         
         <button 
           onClick={() => navigate(`/accounts/projects/${id}/members`)} 
-          className='bg-indigo-500 hover:bg-indigo-600 text-white rounded-md px-3 py-1 m-auto shadow-sm'
+          className={`rounded-md px-3 py-1 m-auto shadow-sm text-white ${canEdit ? "bg-indigo-500 hover:bg-indigo-600" : "bg-gray-400 cursor-not-allowed"}`}
+          disabled={!canEdit}
         >
           Manage Users
         </button>
 
         <button 
           onClick={() => handleDeleteProject(id)} 
-          className='bg-red-500 hover:bg-red-600 text-white rounded-md px-3 py-1 m-auto shadow-sm'
+          className={`rounded-md px-3 py-1 m-auto shadow-sm text-white ${canEdit ? "bg-red-500 hover:bg-red-600" : "bg-gray-400 cursor-not-allowed"}`}
+          disabled={!canEdit}
         >
           Delete
         </button>
       </div>
     )
-  }
+  };
+
+
 
   return (
     <div className="p-6 bg-gray-100 min-h-screen">
@@ -121,7 +144,7 @@ const Projects = () => {
         
         {projects.map((project, index) => (
           <React.Fragment key={project.id}>
-            {row(project.title, project.description, project.id, index)}
+            {row(project.title, project.description, project.id, project.role, index)}
           </React.Fragment>
         ))}
       </div>
@@ -143,4 +166,4 @@ const Projects = () => {
   )
 }
 
-export default Projects
+export default Projects;
