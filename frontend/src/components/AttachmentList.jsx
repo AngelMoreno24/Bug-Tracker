@@ -4,7 +4,7 @@ import Modal from "../components/Modal"; // assume you have a reusable modal
 const AttachmentList = ({ attachments }) => {
   const [selected, setSelected] = useState(null);
 
-  const getFileUrl = (file) => `http://localhost:3000/uploads/${file}`;
+  const getFileUrl = (file) => `${import.meta.env.VITE_BACKEND_URL}/uploads/${file}`;
 
   return (
     <div>
