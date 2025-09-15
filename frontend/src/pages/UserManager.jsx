@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from "../hooks/useAuth";
-import { listCompanyMembers, addCompanyMember } from '../api/CompanyMemberAPI';
+import { listCompanyMembers, addCompanyMember, removeCompanyMember } from '../api/CompanyMemberAPI';
 
 const UserManager = () => {
   const { token, user: currentUser } = useAuth();
@@ -33,6 +33,17 @@ const UserManager = () => {
     await addCompanyMember(inviteId, "Developer", token);
     setInviteId('');
     fetchProjectMembers();
+  };
+
+  // Handle removing a member
+  const handleRemove = async (userId) => {
+    if (!window.confirm("Are you sure you want to remove this member?")) return;
+    try {
+      await removeCompanyMember(userId, token);
+      fetchProjectMembers();
+    } catch (err) {
+      console.error(err.message);
+    }
   };
 
   // Button coloring like ProjectMember UserManager
@@ -80,9 +91,15 @@ const UserManager = () => {
             projectMembers.map((user, index) => (
               <div
                 key={user._id || index}
-                className={`px-4 py-2 rounded-lg shadow hover:shadow-md transition cursor-pointer ${getColor(index)}`}
+                className={`px-4 py-2 rounded-lg shadow hover:shadow-md transition flex items-center gap-2 ${getColor(index)}`}
               >
-                {user.name}
+                <span>{user.name}</span>
+                <button
+                  onClick={() => handleRemove(user._id)}
+                  className="ml-2 px-2 py-1 bg-red-600 hover:bg-red-700 text-white rounded text-sm"
+                >
+                  Remove
+                </button>
               </div>
             ))
           ) : (
