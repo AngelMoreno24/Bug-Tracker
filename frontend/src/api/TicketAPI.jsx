@@ -104,10 +104,10 @@ export const updateTicket = async (projectId, ticketId, updates, token) => {
 // -------------------------
 // Delete a ticket
 // -------------------------
-export const deleteTicket = async (ticketId, token) => {
+export const deleteTicket = async (projectId, ticketId, token) => {
   try {
     const res = await axios.delete(
-      `${BASE_URL}/api/tickets/${ticketId}`,
+      `${BASE_URL}/api/tickets/${projectId}/${ticketId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
         withCredentials: true,

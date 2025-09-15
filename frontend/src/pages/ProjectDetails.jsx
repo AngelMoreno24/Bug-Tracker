@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Modal from "../components/Modal";
 import AddTicketForm from "../components/forms/AddTicketForm";
 import { getProjectMembers } from '../api/ProjectMemberAPI';
-import { getTickets, createTicket } from '../api/TicketAPI';
+import { getTickets, createTicket, deleteTicket } from '../api/TicketAPI';
 import { getProjectById } from '../api/ProjectAPI';
 import { useAuth } from "../hooks/useAuth";
 
@@ -19,7 +19,6 @@ const ProjectDetails = () => {
     const [projectDescription, setProjectDescription] = useState('');
     const [ticketForm, setTicketForm] = useState({ title: "", description: "", type: "bug", priority: "low", projectId: id });
     
-    // Track which roles are collapsed
     const [collapsedRoles, setCollapsedRoles] = useState({
         Admin: false,
         Manager: false,
@@ -71,6 +70,16 @@ const ProjectDetails = () => {
         setAddTicketOpen(false);
     };
 
+    const handleRemoveTicket = async (ticketId) => {
+        if (!window.confirm("Are you sure you want to remove this ticket?")) return;
+        try {
+            await deleteTicket(id, ticketId, token);
+            fetchProjectTickets();
+        } catch (err) {
+            console.error(err.message);
+        }
+    };
+
     const getColor = (role) => {
         switch (role) {
             case "Admin": return "bg-red-500 text-white font-semibold hover:bg-red-600";
@@ -83,15 +92,12 @@ const ProjectDetails = () => {
 
     const memberRow = (user, roleCategory, key) => {
         if (user.role !== roleCategory) return null;
-
         return (
             <div
                 key={key}
                 className={`relative group px-4 py-2 ${getColor(user.role)} rounded cursor-pointer transition-transform transform hover:scale-105 hover:shadow-lg flex items-center gap-2`}
             >
                 <p className="font-medium">{user.name}</p>
-
-                {/* Tooltip */}
                 <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none bg-gray-800 text-white text-sm px-3 py-1 rounded shadow-lg whitespace-nowrap z-50">
                     Role: {user.role}{user.email ? ` | Email: ${user.email}` : ''}
                 </div>
@@ -126,19 +132,22 @@ const ProjectDetails = () => {
 
     const ticketRow = (ticket, key) => {
         const { title, type, priority, assignedTo, createdAt, updatedAt, _id } = ticket;
-
         return (
             <div
                 key={key}
-                onClick={() => navigate(`/accounts/projects/${id}/${_id}`)}
-                className='relative group grid grid-cols-4 px-4 py-3 bg-white border-b hover:bg-gray-50 cursor-pointer transition'
+                className='relative group grid grid-cols-5 px-4 py-3 bg-white border-b hover:bg-gray-50 cursor-pointer transition items-center'
             >
                 <p className='text-center self-center font-medium'>{title}</p>
                 <p className={`text-center py-1 px-2 rounded w-24 m-auto ${getTypeColor(type)}`}>{type}</p>
                 <p className={`text-center py-1 px-2 rounded w-24 m-auto ${getPriorityColor(priority)}`}>{priority}</p>
                 <p className='text-center self-center'>{assignedTo?.name || "-"}</p>
+                <button
+                    onClick={(e) => { e.stopPropagation(); handleRemoveTicket(_id); }}
+                    className="px-3 py-1 bg-red-500 hover:bg-red-600 text-white rounded"
+                >
+                    Remove
+                </button>
 
-                {/* Tooltip */}
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none bg-gray-800 text-white text-sm px-3 py-1 rounded shadow-lg whitespace-nowrap z-50">
                     Type: {type} | Priority: {priority} | Developer: {assignedTo?.name || "-"} | Created: {formatDate(createdAt)} | Updated: {formatDate(updatedAt)}
                 </div>
@@ -155,7 +164,6 @@ const ProjectDetails = () => {
 
     return (
         <div className="p-6 bg-gray-100 min-h-screen space-y-6">
-
             {/* Project Header */}
             <div className='bg-white rounded-lg shadow p-6'>
                 <h1 className='text-3xl font-bold text-gray-800 mb-2 text-center'>{projectTitle}</h1>
@@ -208,11 +216,12 @@ const ProjectDetails = () => {
                     </div>
 
                     {/* Tickets Table Header */}
-                    <div className='grid grid-cols-4 px-4 py-2 bg-gray-200 font-semibold text-gray-700 rounded-t'>
+                    <div className='grid grid-cols-5 px-4 py-2 bg-gray-200 font-semibold text-gray-700 rounded-t'>
                         <p className='text-center'>Title</p>
                         <p className='text-center'>Type</p>
                         <p className='text-center'>Priority</p>
                         <p className='text-center'>Developer</p>
+                        <p className='text-center'>Action</p>
                     </div>
 
                     {/* Tickets List */}
