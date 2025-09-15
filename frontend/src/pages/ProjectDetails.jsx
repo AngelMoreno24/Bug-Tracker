@@ -9,7 +9,7 @@ import { useAuth } from "../hooks/useAuth";
 
 const ProjectDetails = () => {
     const navigate = useNavigate();
-    const { user, token } = useAuth();
+    const { token } = useAuth();
     const { id } = useParams();
 
     const [addTicketOpen, setAddTicketOpen] = useState(false);
@@ -18,6 +18,14 @@ const ProjectDetails = () => {
     const [projectTitle, setProjectTitle] = useState('');
     const [projectDescription, setProjectDescription] = useState('');
     const [ticketForm, setTicketForm] = useState({ title: "", description: "", type: "bug", priority: "low", projectId: id });
+    
+    // Track which roles are collapsed
+    const [collapsedRoles, setCollapsedRoles] = useState({
+        Admin: false,
+        Manager: false,
+        Developer: false,
+        Submitter: false
+    });
 
     useEffect(() => {
         if (token) {
@@ -138,6 +146,13 @@ const ProjectDetails = () => {
         );
     };
 
+    const toggleRoleCollapse = (role) => {
+        setCollapsedRoles(prev => ({
+            ...prev,
+            [role]: !prev[role]
+        }));
+    };
+
     return (
         <div className="p-6 bg-gray-100 min-h-screen space-y-6">
 
@@ -147,10 +162,10 @@ const ProjectDetails = () => {
                 <p className='text-gray-600 text-center'>{projectDescription}</p>
             </div>
 
-            <div className='grid grid-cols-1 lg:grid-cols-2 gap-6'>
+            <div className='grid grid-cols-1 lg:grid-cols-3 gap-6'>
 
-                {/* Members Section */}
-                <div className='bg-white rounded-lg shadow p-6'>
+                {/* Members Section (1/3) */}
+                <div className='lg:col-span-1 bg-white rounded-lg shadow p-6 max-h-[500px] overflow-y-auto'>
                     <div className="flex justify-between items-center border-b pb-4 mb-4">
                         <h2 className="text-2xl font-bold text-gray-800">Members</h2>
                         <button
@@ -162,18 +177,26 @@ const ProjectDetails = () => {
                     </div>
                     {["Admin", "Manager", "Developer", "Submitter"].map((role) => (
                         <div key={role} className="mb-4">
-                            <h3 className="font-semibold mb-2">{role}</h3>
-                            <div className="flex flex-wrap gap-2">
-                                {projectMembers.map((user, index) =>
-                                    memberRow(user, role, index)
-                                )}
+                            <div 
+                                className="flex justify-between items-center cursor-pointer"
+                                onClick={() => toggleRoleCollapse(role)}
+                            >
+                                <h3 className="font-semibold">{role}</h3>
+                                <span>{collapsedRoles[role] ? "+" : "-"}</span>
                             </div>
+                            {!collapsedRoles[role] && (
+                                <div className="flex flex-wrap gap-2 mt-2">
+                                    {projectMembers.map((user, index) =>
+                                        memberRow(user, role, index)
+                                    )}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
 
-                {/* Tickets Section */}
-                <div className='bg-white rounded-lg shadow p-6'>
+                {/* Tickets Section (2/3) */}
+                <div className='lg:col-span-2 bg-white rounded-lg shadow p-6'>
                     <div className="flex justify-between items-center border-b pb-4 mb-4">
                         <h2 className="text-2xl font-bold text-gray-800">Tickets</h2>
                         <button 
