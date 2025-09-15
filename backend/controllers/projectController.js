@@ -99,7 +99,7 @@ export const getProjectById = async (req, res) => {
 // -------------------------
 export const updateProject = async (req, res) => {
   try {
-    const projectId = req.params.id;
+    const projectId = req.params.projectId;
 
     const membership = await ProjectMember.findOne({
       projectId,
@@ -127,7 +127,7 @@ export const updateProject = async (req, res) => {
 // -------------------------
 export const deleteProject = async (req, res) => {
   try {
-    const projectId = req.params.id;
+    const projectId = req.params.projectId;
 
     const membership = await ProjectMember.findOne({
       projectId,

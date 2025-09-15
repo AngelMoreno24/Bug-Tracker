@@ -8,7 +8,7 @@ import {
 } from "../controllers/projectController.js";
 
 import { authenticateToken } from "../middleware/tokenAuthentication.js";
-import { authorizeRoles } from "../middleware/roleMiddleware.js";
+import {  authorizeCompanyRoles } from "../middleware/roleMiddleware.js";
 
 const router = express.Router();
 
@@ -18,9 +18,9 @@ router.use(authenticateToken);
 router.get("/", getUserProjects);
 router.get("/:id", getProjectById);
 
-// (Manager/Admin only)
-router.post("/", authorizeRoles("Manager", "admin"), createProject);
-router.put("/:id", authorizeRoles("Manager", "admin"), updateProject);
-router.delete("/:id", authorizeRoles("Manager", "admin"), deleteProject);
+//Create, Edit, Delete (Manager/Admin only)
+router.post("/", authorizeCompanyRoles("Manager", "Admin"), createProject);
+router.put("/:projectId", authorizeCompanyRoles("Manager", "Admin"), updateProject);
+router.delete("/:projectId", authorizeCompanyRoles("Manager", "Admin"), deleteProject);
 
 export default router;
