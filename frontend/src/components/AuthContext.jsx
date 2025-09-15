@@ -7,13 +7,13 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("accessToken") || null);
+  const [token, setToken] = useState(null); // only in memory
   const [loading, setLoading] = useState(true);
 
-  // Configure axios to send cookies
+  // ✅ Send cookies on all requests
   axios.defaults.withCredentials = true;
 
-  // Refresh access token on mount
+  // 🔹 On mount, try refreshing the session
   useEffect(() => {
     const refreshUser = async () => {
       try {
@@ -22,9 +22,11 @@ export function AuthProvider({ children }) {
           {},
           { withCredentials: true }
         );
+
         setToken(res.data.token);
         setUser(res.data.user);
       } catch {
+        console.log("No valid session found");
         setToken(null);
         setUser(null);
       } finally {
@@ -35,7 +37,7 @@ export function AuthProvider({ children }) {
     refreshUser();
   }, []);
 
-  // Login function
+  // 🔹 Login
   const login = async (email, password) => {
     try {
       const res = await axios.post(
@@ -46,7 +48,6 @@ export function AuthProvider({ children }) {
 
       setToken(res.data.token);
       setUser(res.data.user);
-      localStorage.setItem("accessToken", res.data.token);
 
       navigate("/accounts/dashboard", { replace: true });
       return true;
@@ -56,7 +57,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Demo login
+  // 🔹 Demo login
   const demoLogin = async () => {
     try {
       const res = await axios.post(
@@ -67,7 +68,6 @@ export function AuthProvider({ children }) {
 
       setToken(res.data.token);
       setUser(res.data.user);
-      localStorage.setItem("accessToken", res.data.token);
 
       navigate("/accounts/dashboard", { replace: true });
       return true;
@@ -77,7 +77,7 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Logout
+  // 🔹 Logout
   const logout = async () => {
     try {
       await axios.post(
@@ -85,9 +85,9 @@ export function AuthProvider({ children }) {
         {},
         { withCredentials: true }
       );
+
       setUser(null);
       setToken(null);
-      localStorage.removeItem("accessToken");
 
       navigate("/", { replace: true });
     } catch (err) {
@@ -95,15 +95,13 @@ export function AuthProvider({ children }) {
     }
   };
 
-  // Block rendering until refresh completes
+  // Prevent rendering until refresh check finishes
   if (loading) {
     return <div>Loading...</div>;
   }
 
   return (
-    <AuthContext.Provider
-      value={{ user, token, login, demoLogin, logout, loading }}
-    >
+    <AuthContext.Provider value={{ user, token, login, demoLogin, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
