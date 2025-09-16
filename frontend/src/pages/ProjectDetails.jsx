@@ -136,6 +136,7 @@ const ProjectDetails = () => {
             <div
                 key={key}
                 className='relative group grid grid-cols-5 px-4 py-3 bg-white border-b hover:bg-gray-50 cursor-pointer transition items-center'
+                            onClick={() => navigate(`/accounts/projects/${id}/${_id}`)}
             >
                 <p className='text-center self-center font-medium'>{title}</p>
                 <p className={`text-center py-1 px-2 rounded w-24 m-auto ${getTypeColor(type)}`}>{type}</p>
