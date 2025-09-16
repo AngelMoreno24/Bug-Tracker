@@ -1,6 +1,7 @@
 import Project from "../models/ProjectModel.js";
 import ProjectMember from "../models/ProjectMemberModel.js";
 import CompanyMember from "../models/CompanyMemberModel.js";
+import Ticket from "../models/TicketModel.js";
 
 // -------------------------
 // Create a new project
@@ -99,6 +100,7 @@ export const deleteProject = async (req, res) => {
 
     await Project.findByIdAndDelete(projectId);
     await ProjectMember.deleteMany({ projectId });
+    await Ticket.deleteMany({ projectId })
 
     res.status(200).json({ message: "Project deleted successfully" });
   } catch (error) {
