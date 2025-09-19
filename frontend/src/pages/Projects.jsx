@@ -70,19 +70,6 @@ const Projects = () => {
     }
   }, [token]);
 
-  // Demo data for portfolio
-  useEffect(() => {
-    const projectsArray = [
-      { id: 1, title: "Website", description: "Company website with marketing pages" },
-      { id: 2, title: "Dashboard", description: "Internal analytics dashboard" },
-      { id: 3, title: "Backend API", description: "API powering mobile and web apps" },
-      { id: 4, title: "Mobile App", description: "Cross-platform mobile application" },
-      { id: 5, title: "Authentication", description: "User login and authentication system" },
-      { id: 6, title: "E-commerce", description: "Online store platform with payments" },
-    ];
-    setProjects(projectsArray);
-  }, []);
-
   const row = (title, description, id, role, index) => {
     const canEdit = role === "Manager" || role === "Admin"; // only allow delete/manage if user has permission
 
