@@ -17,8 +17,10 @@ const UserManager = () => {
       const res = await listCompanyMembers(token);
       let members = res?.members || [];
 
+      console.log(res)
+      console.log(currentUser)
       // Optional: remove current user
-      if (currentUser?._id) members = members.filter(u => u._id !== currentUser._id);
+      members = members.filter(u => u.userId !== currentUser.id);
 
       setProjectMembers(members);
     } catch (err) {

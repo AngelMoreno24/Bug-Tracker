@@ -47,15 +47,15 @@ export const listCompanyMembers = async (req, res) => {
     const company = await Company.findOne({ ownerId: req.user._id });
     if (!company) return res.status(403).json({ message: "No company found for admin" });
 
-    const members = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role");
+    const members = await CompanyMember.find({ companyId: company._id }).populate("userId", "name email role id");
     // Simplify data
     const simplifiedMembers = members.map(m => ({
       id: m._id,
       name: m.userId.name,
+      userId: m.userId._id,
       email: m.userId.email,
       role: m.role
     }));
-
     res.json({ members: simplifiedMembers });
   } catch (error) {
     console.error("List company members error:", error);
