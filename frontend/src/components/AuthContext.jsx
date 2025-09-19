@@ -62,7 +62,7 @@ export function AuthProvider({ children }) {
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/login`,
-        { email: "demo@example.com", password: "demopassword" },
+        { email: "demo@example.com", password: "demo123" },
         { withCredentials: true }
       );
 
