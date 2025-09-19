@@ -190,14 +190,12 @@ const ProjectTicketDetails = () => {
     switch (status.toLowerCase()) {
       case "open": 
         return "bg-green-200 text-green-800 px-2 py-1 rounded-full text-xs";
-      case "in progress": 
+      case "in-progress": 
         return "bg-yellow-200 text-yellow-800 px-2 py-1 rounded-full text-xs";
       case "resolved": 
         return "bg-blue-200 text-blue-800 px-2 py-1 rounded-full text-xs";
       case "closed": 
         return "bg-gray-400 text-white px-2 py-1 rounded-full text-xs";
-      case "reopened": 
-        return "bg-purple-200 text-purple-800 px-2 py-1 rounded-full text-xs";
       default: 
         return "bg-gray-300 text-black px-2 py-1 rounded-full text-xs";
     }
