@@ -6,6 +6,7 @@ const CompanyMemberSchema = new Schema({
   companyId: { type: mongoose.Schema.Types.ObjectId, ref: "Company", required: true },
   role: { type: String, enum: ["Admin", "Manager", "Developer", "Tester"], default: "Developer" },
   status: { type: String, enum: ["Active", "Pending", "Removed"], default: "Active" },
+  isDemo: { type: Boolean, default: false },
 }, { timestamps: true });
 
 const CompanyMember = mongoose.model('CompanyMember', CompanyMemberSchema);

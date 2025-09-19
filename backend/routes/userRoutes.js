@@ -20,6 +20,6 @@ router.get("/:id", authorizeRoles("Manager", "Developer", "Tester"), getUserById
 
 router.put("/:id", authorizeRoles("Manager", "Developer", "Tester"), updateUser);
 
-router.delete("/:id", authorizeRoles("Manager"), deleteUser);
+router.delete("/:projectId", authorizeRoles("Manager"), deleteUser);
 
 export default router;

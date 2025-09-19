@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 const CompanySchema = new Schema({
   name: { type: String, required: true },
   ownerId: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+  isDemo: { type: Boolean, default: false },
 }, { timestamps: true });
 
 

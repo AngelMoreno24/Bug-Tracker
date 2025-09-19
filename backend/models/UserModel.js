@@ -7,6 +7,7 @@ const UserSchema = new Schema({
   password: { type: String },
   role: { type: String, enum: ['admin','manager','developer','demo','submitter'], default: 'admin' }, // global admin only
   createdAt: { type: Date, default: Date.now },
+  isDemo: { type: Boolean, default: false },
 }, { timestamps: true });
 
 

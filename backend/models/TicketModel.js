@@ -36,6 +36,8 @@ const TicketSchema = new Schema({
 
   tags: [String],
   attachments: [String], // file URLs
+  
+  isDemo: { type: Boolean, default: false },
 
 }, { timestamps: true });
 

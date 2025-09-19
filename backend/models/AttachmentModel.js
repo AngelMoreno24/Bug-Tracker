@@ -25,6 +25,7 @@ const AttachmentSchema = new mongoose.Schema(
     mimeType: {
       type: String, // for knowing if it's image/pdf/etc
     },
+  isDemo: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
